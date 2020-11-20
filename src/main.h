@@ -14,7 +14,7 @@ Date     : 2020-11-20
 #define _MAIN_H_
 /*------------------------- Includes -----------------------*/
 #include "stm8l15x.h"
-
+#include "bsp_conf.h"
 /*----------- Global Definitions and Declarations ----------*/
 //GPIO Definition
 #define LEDG_PORT       GPIOC                     //LED GREEN
@@ -80,50 +80,7 @@ Date     : 2020-11-20
 
 
 /*------------------- Function Prototype -------------------*/
-/*************************************************************
-Function Name       : bsp_gpio_init
-Function Description: gpio initialization
-Param_in            : 
-Param_out           : 
-Return Type         : 
-Note                : 
-Author              : Yan
-Time                : 2020-11-20
-*************************************************************/
-void bsp_gpio_init(void);
-/*************************************************************
-Function Name       : bsp_clk_init
-Function Description: system clk initializatiom
-Param_in            : 
-Param_out           : 
-Return Type         : 
-Note                : 
-Author              : Yan
-Time                : 2020-11-20
-*************************************************************/
-void bsp_clk_init(void);
-/*************************************************************
-Function Name       : bsp_key_it
-Function Description: key state detection
-Param_in            : 
-Param_out           : 
-Return Type         : 
-Note                : 
-Author              : Yan
-Time                : 2020-11-20
-*************************************************************/
-void bsp_key_it(void);
-/*************************************************************
-Function Name       : bsp_uart_init
-Function Description: uart initialization
-Param_in            : 
-Param_out           : 
-Return Type         : 
-Note                : 
-Author              : Yan
-Time                : 2020-11-20
-*************************************************************/
-void bsp_uart_init(void);
+
 
 /*------------------- Function Implement -------------------*/
 
