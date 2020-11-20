@@ -27,6 +27,7 @@ Date     : 2020-11-20
 
 
 /*------------------- Function Implement -------------------*/
+#if (1 == CODE_VERSION)//Version 1
 /*************************************************************
 Function Name       : main
 Function Description: 
@@ -41,7 +42,7 @@ int main(void)
 {
     
 }
-
+#endif
 #ifdef USE_FULL_ASSERT
 void assert_failed(u8* file,u32 line)
 {

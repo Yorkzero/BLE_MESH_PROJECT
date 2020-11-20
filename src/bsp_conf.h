@@ -70,6 +70,20 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_uart_init(void);
 
+//Ä£Äâ´®¿Ú´òÓ¡
+#if (SIM_UART_PRINTF_EN)
+extern void sim_uart_printf(uint8_t data);
+extern void sim_uart_printf_it(uint8_t data);
+
+extern void sim_printf_string(uint8_t *str);
+extern void sim_printf_hex(uint8_t data);
+
+#else
+#define sim_uart_printf(N)
+#define sim_uart_printf_it(N)
+#define sim_printf_string(N)
+#define sim_printf_hex(N)
+#endif
 /*------------------- Function Implement -------------------*/
 
 #endif

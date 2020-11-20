@@ -13,8 +13,10 @@ Date     : 2020-11-20
 #ifndef _MAIN_H_
 #define _MAIN_H_
 /*------------------------- Includes -----------------------*/
-#include "stm8l15x.h"
-#include "bsp_conf.h"
+#include <stdio.h>    /*<std io driver>*/
+#include "stm8l15x.h" /*<std peripharal driver>*/
+#include "bsp_conf.h" /*<program bsp driver>*/
+
 /*----------- Global Definitions and Declarations ----------*/
 //GPIO Definition
 #define LEDG_PORT       GPIOC                     //LED GREEN
@@ -78,7 +80,8 @@ Date     : 2020-11-20
 //配置系统时钟，在初始化时钟时根据此定义初始化，注：本系统使用内部16MHz HSI时钟源
 #define SYS_CLK_FREQ          SYS_CLK_FREQ_16M    
 
-
+#define SIM_UART_PRINTF_EN 0 //模拟打印开关
+#define CODE_VERSION 1       //用于版本号控制
 /*------------------- Function Prototype -------------------*/
 
 
