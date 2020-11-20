@@ -1,0 +1,69 @@
+{
+    "name": "BLE_MESH_PROJECT",
+    "type": "C51",
+    "mode": "Release",
+    "toolchain": "IAR_STM8",
+    "uploader": "STVP",
+    "dependenceList": [
+        {
+            "groupName": "custom",
+            "depList": [
+                {
+                    "name": "default",
+                    "incList": [],
+                    "libList": [],
+                    "sourceDirList": [],
+                    "defineList": [
+                        "USE_STDPERIPH_DRIVER",
+                        "STM8L15X_MD"
+                    ]
+                }
+            ]
+        },
+        {
+            "groupName": "build-in",
+            "depList": [
+                {
+                    "name": "default",
+                    "incList": [],
+                    "libList": [],
+                    "sourceDirList": [],
+                    "defineList": []
+                },
+                {
+                    "name": "toolchain",
+                    "incList": [
+                        ".\\..\\..\\..\\IAR\\stm8\\inc",
+                        ".\\..\\..\\..\\IAR\\stm8\\inc\\c",
+                        ".\\..\\..\\..\\IAR\\stm8\\inc\\ecpp",
+                        ".\\..\\..\\..\\IAR\\stm8\\lib"
+                    ],
+                    "sourceDirList": [],
+                    "libList": [
+                        ".\\..\\..\\..\\IAR\\stm8\\lib"
+                    ],
+                    "defineList": []
+                }
+            ]
+        }
+    ],
+    "compileConfig": {
+        "options": "null"
+    },
+    "srcDirs": [
+        ".\\src",
+        ".\\STM8L15x_StdPeriph_Driver",
+        ".\\general_function"
+    ],
+    "excludeList": [],
+    "outDir": ".\\out",
+    "deviceName": null,
+    "packDir": null,
+    "uploadConfig": {
+        "deviceName": "STM8L15xK4",
+        "bin": ".\\out\\Release\\BLE_MESH_PROJECT.hex",
+        "eepromFile": "null",
+        "optionByteFile": "null"
+    },
+    "miscInfo": {}
+}
