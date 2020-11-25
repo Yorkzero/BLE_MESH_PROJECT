@@ -20,7 +20,7 @@ Date     : 2020-11-23
 
 
 /*------------------ Variable Declarations -----------------*/
-
+volatile uint8_t AT_flag = 0;//AT cmd recorder
 
 /*------------------- Function Prototype -------------------*/
 
@@ -38,6 +38,18 @@ Time                : 2020-11-23
 *************************************************************/
 void AT_Test_Demo(void)
 {
+    if (AT_flag != key_flag)
+    {
+        LEDR_H();
+        USART1_SendWord("+++a");
+        delay_ms_1(200);
+        USART1_SendWord("AT+NAME=YSY\r\n");
+        delay_ms_1(200);
+        
+        USART1_SendWord("AT+ENTM\r\n");
+        AT_flag = key_flag;
+        LEDR_L();
+    }
     
 }
 /*************************************************************

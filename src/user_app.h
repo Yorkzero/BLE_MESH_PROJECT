@@ -16,7 +16,7 @@ Date     : 2020-11-23
 #include "main.h"
 
 /*----------- Global Definitions and Declarations ----------*/
-
+extern volatile uint8_t AT_flag;//AT cmd recorder
 
 /*-------------------- Type Declarations -------------------*/
 

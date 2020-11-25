@@ -16,13 +16,13 @@ Date     : 2020-11-20
 #include "main.h"
 
 /*----------- Global Definitions and Declarations ----------*/
-
+extern volatile uint8_t key_flag;   //key state flag
 
 /*-------------------- Type Declarations -------------------*/
 
 
 /*------------------ Variable Declarations -----------------*/
-extern volatile uint8_t key_flag;   //key state flag
+
 
 
 /*------------------- Function Prototype -------------------*/
@@ -54,7 +54,7 @@ Function Description: key state detection
 Param_in            : 
 Param_out           : 
 Return Type         : 
-Note                : 
+Note                : everytime clicking the button will reverse the key_flag
 Author              : Yan
 Time                : 2020-11-20
 *************************************************************/

@@ -44,21 +44,16 @@ int main(void)
     bsp_clk_init();
     bsp_gpio_init();
     bsp_uart_init(); 
-    key_flag = 0;
-#if (1 == CODE_VERSION)//Version 1 
-    delay_ms_1(10);
-    
-    delay_ms_1(100);
-    
-    //LINK_ENABLE();
+
+#if (1 == CODE_VERSION)//Version 1     
     KEY_ENABLE();
     delay_ms_1(100);
     __enable_interrupt();
     while(1)
     {
        //link_sta_detec();
-       key_led_run();
-        
+       //key_led_run();
+        AT_Test_Demo();
     }
 #endif
 }

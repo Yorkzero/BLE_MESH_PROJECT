@@ -98,7 +98,7 @@ Function Description: key state detection
 Param_in            : 
 Param_out           : 
 Return Type         : 
-Note                : 
+Note                : everytime clicking the button will reverse the key_flag
 Author              : Yan
 Time                : 2020-11-20
 *************************************************************/
@@ -139,9 +139,9 @@ void bsp_uart_init(void)
     * @param PR: no parity, 
     * @param MODE: RX/TX mode 
     */
-    USART_Init(USART1, (uint32_t)57600, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, (USART_Mode_TypeDef)(USART_Mode_Tx | USART_Mode_Rx));
+    USART_Init(USART1, (uint32_t)57600, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, USART_Mode_Tx);
 
-    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+    // USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
     USART_ITConfig(USART1, USART_IT_OR, ENABLE);
     USART_Cmd(USART1, ENABLE);
 }

@@ -408,7 +408,7 @@ INTERRUPT_HANDLER(USART1_RX_TIM5_CC_IRQHandler, 28)
   */
  if(USART_GetITStatus(USART1,USART_IT_RXNE) != RESET)        //检查指定的UART1中断是否发生。 
     {
-      USART_SendData8(USART1,USART_ReceiveData8(USART1));             //将接收的数据再用串口发送出去
+      //USART_SendData8(USART1,USART_ReceiveData8(USART1));             //将接收的数据再用串口发送出去
       USART_ClearITPendingBit(USART1,USART_IT_RXNE);            //清除UART1挂起标志
     }
 }
