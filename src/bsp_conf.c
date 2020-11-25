@@ -39,14 +39,22 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_gpio_init(void)
 {
+    //Initialization of all used pin, change the mode if needed.
     GPIO_Init(LEDG_PORT, LEDG_PIN, GPIO_Mode_Out_PP_Low_Slow);       //Green led init
     GPIO_Init(LEDR_PORT, LEDR_PIN, GPIO_Mode_Out_PP_Low_Slow);       //Red led init
     GPIO_Init(LOWV_PORT, LOWV_PIN, GPIO_Mode_In_FL_No_IT);           //Low pwr detection, opening interrupt when used.
     GPIO_Init(KEY_PORT, KEY_PIN, GPIO_Mode_In_PU_No_IT);             //key detection, opening interrupt when used.
-    GPIO_Init(BLE_RST_PORT, BLE_RST_PIN, GPIO_Mode_Out_PP_Low_Slow); //ble chip enable state
+    GPIO_Init(BLE_RST_PORT, BLE_RST_PIN, GPIO_Mode_Out_PP_High_Slow); //ble chip enable state
+    GPIO_Init(BLE_LINK_PORT, BLE_LINK_PIN, GPIO_Mode_In_PU_No_IT);   //ble link state/active low
     GPIO_Init(BEEP_PORT, BEEP_PIN, GPIO_Mode_Out_PP_Low_Slow);       //beep init
     GPIO_Init(UART_RX_PORT, UART_RX_PIN, GPIO_Mode_In_PU_No_IT);     //UART receive init
-    GPIO_Init(UART_TX_PORT, UART_TX_PIN, GPIO_Mode_Out_PP_Low_Fast); //UART transmitt init
+    GPIO_Init(UART_TX_PORT, UART_TX_PIN, GPIO_Mode_Out_PP_High_Fast); //UART transmitt init
+    //Initialization of EXIT
+    EXTI_SetPortSensitivity(KEY_EXTI_PORT,EXTI_Trigger_Falling);     //key trigger falling
+    EXTI_SetPinSensitivity(EXTI_LINK_PIN,EXTI_Trigger_Rising_Falling);//link trigger rising/falling
+    //IT Priority
+    //ITC_SetSoftwarePriority(EXTIB_IRQn,ITC_PriorityLevel_1); //key first
+    //ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_2); //led second
     //Set unused pin mode: IN_PU_NO_IT
     GPIO_Init(GPIOA, PA_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
     GPIO_Init(GPIOB, PB_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
@@ -94,7 +102,14 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_key_it(void)
 {
-
+    delay_ms_1(20);//avoid shaking
+    if (!KEY_READ())
+    {
+        LEDG_R();
+        LEDR_R();
+    }
+    
+    
 }
 /*************************************************************
 Function Name       : bsp_uart_init
@@ -108,20 +123,41 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_uart_init(void)
 {
+    USART_DeInit(USART1);
     CLK_PeripheralClockConfig(CLK_Peripheral_USART1, ENABLE);
     //remappin
     //SYSCFG_REMAPPinConfig(REMAP_Pin_USART1TxRxPortC, ENABLE);
-    /*USART1 ,
-    *BR: 57600, 
-    *8bit, 
-    *1stop bit, 
-    *no parity, 
-    *RX/TX mode 
+    /**
+    * @param USART1 ,
+    * @param BR: 57600, 
+    * @param WL: 8bit, 
+    * @param SB: 1stop bit, 
+    * @param PR: no parity, 
+    * @param MODE: RX/TX mode 
     */
     USART_Init(USART1, (uint32_t)57600, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, (USART_Mode_TypeDef)(USART_Mode_Tx | USART_Mode_Rx));
 
-    USART_ITConfig(USART1, USART_IT_OR, ENABLE);
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
     USART_Cmd(USART1, ENABLE);
+}
+/*************************************************************
+Function Name       : USART1_SendWord
+Function Description: Transmits 8 bit *data through the USART1 peripharal
+Param_in            : *Data
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-23
+*************************************************************/
+void USART1_SendWord(uint8_t *Data)
+{
+    while (*Data)
+    {
+        USART_SendData8(USART1, *Data++);
+        while(!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
+    }
+    
 }
 
 /*************************************************************

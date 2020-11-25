@@ -1,0 +1,17 @@
+[2020-11-24 08:32:08]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.compileByMulThread(Int32 thrNum, CmdInfo[] cmds, List`1 doneList)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-24 08:32:27]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.compileByMulThread(Int32 thrNum, CmdInfo[] cmds, List`1 doneList)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-24 09:43:24]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-24 09:43:37]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-24 09:43:44]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+

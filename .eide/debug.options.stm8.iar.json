@@ -1,0 +1,35 @@
+{
+    "version": 3,
+    "beforeBuildTasks": [],
+    "afterBuildTasks": [
+        {
+            "name": "clean",
+            "command": "cd \"${OutDir}\" && del *._* *.lst"
+        }
+    ],
+    "global": {
+        "printf-formatter": "tiny",
+        "scanf-formatter": "small",
+        "math-functions": "default",
+        "output-debug-info": "enable"
+    },
+    "c/cpp-compiler": {
+        "optimization": "no",
+        "data-mode": "medium",
+        "code-mode": "small",
+        "runtime-lib": "normal",
+        "destroy-cpp-static-object": true
+    },
+    "asm-compiler": {
+        "case-sensitive-user-symbols": true
+    },
+    "linker": {
+        "linker-config": "lnkstm8s103f3.icf",
+        "auto-search-runtime-lib": true,
+        "use-C_SPY-debug-lib": true,
+        "config-defines": [
+            "_CSTACK_SIZE=0x0200",
+            "_HEAP_SIZE=0x0000"
+        ]
+    }
+}

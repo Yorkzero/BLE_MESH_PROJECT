@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "stm8-debug",
+            "request": "launch",
+            "name": "stm8-debug launch",
+            "servertype": "st7",
+            "interface": "stlink3",
+            "cpu": "STM8L151K4",
+            "executable": ".\\out\\Debug\\BLE_MESH_PROJECT.out"
+        }
+    ]
+}

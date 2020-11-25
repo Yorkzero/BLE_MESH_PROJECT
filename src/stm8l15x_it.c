@@ -28,7 +28,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm8l15x_it.h"
-
+#include "main.h"
 
 /** @addtogroup STM8L15x_StdPeriph_Examples
   * @{
@@ -138,6 +138,8 @@ INTERRUPT_HANDLER(EXTIB_G_IRQHandler, 6)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+ bsp_key_it();
+ EXTI_ClearITPendingBit(EXTI_IT_PortB);
 }
 
 /**
@@ -199,9 +201,7 @@ INTERRUPT_HANDLER(EXTI3_IRQHandler, 11)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
-    user_app_vib_detect_it();  //振动检测函数
-
-    EXTI_ClearITPendingBit(EXTI_IT_Pin3); //清中断标志
+    
 }
 
 /**
@@ -214,6 +214,9 @@ INTERRUPT_HANDLER(EXTI4_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  link_sta_detec();
+  EXTI_ClearITPendingBit(EXTI_IT_Pin4);
+  
 }
 
 /**
@@ -402,6 +405,11 @@ INTERRUPT_HANDLER(USART1_RX_TIM5_CC_IRQHandler, 28)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+ if(USART_GetITStatus(USART1,USART_IT_RXNE) != RESET)        //检查指定的UART1中断是否发生。 
+    {
+      USART_SendData8(USART1,USART_ReceiveData8(USART1));             //将接收的数据再用串口发送出去
+      USART_ClearITPendingBit(USART1,USART_IT_RXNE);            //清除UART1挂起标志
+    }
 }
 
 /**

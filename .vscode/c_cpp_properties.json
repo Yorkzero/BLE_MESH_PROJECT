@@ -7,14 +7,15 @@
                 ".\\..\\..\\..\\IAR\\stm8\\inc\\c",
                 ".\\..\\..\\..\\IAR\\stm8\\inc\\ecpp",
                 ".\\..\\..\\..\\IAR\\stm8\\lib",
-                ".\\src",
                 ".\\STM8L15x_StdPeriph_Driver\\src",
                 ".\\STM8L15x_StdPeriph_Driver\\inc",
-                ".\\general_function"
+                ".\\general_function",
+                ".\\src"
             ],
             "defines": [
                 "USE_STDPERIPH_DRIVER",
                 "STM8L15X_MD",
+                "DEBUG",
                 "__eeprom=",
                 "__far=",
                 "__far_func=",
@@ -325,10 +326,10 @@
                     ".\\..\\..\\..\\IAR\\stm8\\inc\\c\\*",
                     ".\\..\\..\\..\\IAR\\stm8\\inc\\ecpp\\*",
                     ".\\..\\..\\..\\IAR\\stm8\\lib\\*",
-                    ".\\src\\*",
                     ".\\STM8L15x_StdPeriph_Driver\\src\\*",
                     ".\\STM8L15x_StdPeriph_Driver\\inc\\*",
-                    ".\\general_function\\*"
+                    ".\\general_function\\*",
+                    ".\\src\\*"
                 ]
             }
         }

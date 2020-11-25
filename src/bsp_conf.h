@@ -69,6 +69,18 @@ Author              : Yan
 Time                : 2020-11-20
 *************************************************************/
 void bsp_uart_init(void);
+/*************************************************************
+Function Name       : USART1_SendWord
+Function Description: Transmits 8 bit *data through the USART1 peripharal
+Param_in            : *Data
+Param_out           : 
+Return Type         : 
+Note                : eg. USART1_SendWord("AT+NAME/r/n")
+Author              : Yan
+Time                : 2020-11-23
+*************************************************************/
+void USART1_SendWord(uint8_t *Data);
+
 
 //Ä£Äâ´®¿Ú´òÓ¡
 #if (SIM_UART_PRINTF_EN)

@@ -27,7 +27,7 @@ Date     : 2020-11-20
 
 
 /*------------------- Function Implement -------------------*/
-#if (1 == CODE_VERSION)//Version 1
+
 /*************************************************************
 Function Name       : main
 Function Description: 
@@ -40,9 +40,26 @@ Time                : 2020-11-20
 *************************************************************/
 int main(void)
 {
+#if (1 == CODE_VERSION)//Version 1 
+    bsp_clk_init();
+    bsp_gpio_init();
+    bsp_uart_init();
+    delay_ms_1(10);
     
-}
+    delay_ms_1(100);
+    
+    LINK_ENABLE();
+    //KEY_ENABLE();
+    delay_ms_1(100);
+    __enable_interrupt();
+    while(1)
+    {
+        
+        
+    }
 #endif
+}
+
 #ifdef USE_FULL_ASSERT
 void assert_failed(u8* file,u32 line)
 {
