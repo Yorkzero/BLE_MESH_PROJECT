@@ -16,6 +16,6 @@ void bsp_key_it(void)
     
 }
 ```
-This is a button trigger function, the interested thing is I can only light the green one. But when I used *LEDR_R()* in the *main(void)* function, it works!
+This is a button trigger function, the interested thing is I can only light the green one. But when I used *LEDR_R()* in the *main(void)* function, it works!<br>
 Markdown here, and I will try to fix it.
 
