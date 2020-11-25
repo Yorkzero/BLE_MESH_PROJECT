@@ -37,7 +37,7 @@
 .\out\Debug\stm8l15x_it.o: D:\IAR\stm8\inc\c\ycheck.h
 .\out\Debug\stm8l15x_it.o: D:\IAR\stm8\inc\c\yvals.h
 .\out\Debug\stm8l15x_it.o: D:\IAR\stm8\inc\c\DLib_Defaults.h
-.\out\Debug\stm8l15x_it.o: d:\IAR\stm8\lib\dlstm8smn.h
+.\out\Debug\stm8l15x_it.o: d:\IAR\stm8\lib\dlstm8smf.h
 .\out\Debug\stm8l15x_it.o: D:\IAR\stm8\inc\c\DLib_Product.h
 .\out\Debug\stm8l15x_it.o: D:\IAR\stm8\inc\c\xencoding_limits.h
 .\out\Debug\stm8l15x_it.o: D:\IAR\stm8\inc\c\DLib_Threads.h

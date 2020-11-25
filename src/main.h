@@ -39,6 +39,7 @@ Date     : 2020-11-20
 #define KEY_PORT        GPIOB     //key detec
 #define KEY_PIN         GPIO_Pin_4 //key detec
 #define KEY_EXTI_PORT   EXTI_Port_B
+#define KEY_EXTI_PIN    EXTI_Pin_4
 #define KEY_ENABLE()    GPIO_Init(KEY_PORT, KEY_PIN, GPIO_Mode_In_PU_IT)//KEY IT
 #define KEY_DISABLE()   GPIO_Init(KEY_PORT, KEY_PIN, GPIO_Mode_In_PU_No_IT)//KEY NO IT
 #define KEY_READ()      (KEY_PORT->IDR & KEY_PIN)   //read the key value(active low)
@@ -47,7 +48,7 @@ Date     : 2020-11-20
 #define BLE_RST_PIN     GPIO_Pin_1 //ble reset
 #define BLE_LINK_PORT   GPIOC      //ble link port
 #define BLE_LINK_PIN    GPIO_Pin_4 //ble link pin
-#define EXTI_LINK_PIN   EXTI_Pin_4  //ble exti link pin
+//#define EXTI_LINK_PIN   EXTI_Pin_4  //ble exti link pin
 #define LINK_ENABLE()   GPIO_Init(BLE_LINK_PORT, BLE_LINK_PIN, GPIO_Mode_In_PU_IT)     //LINK IT
 #define LINK_DISABLE()  GPIO_Init(BLE_LINK_PORT, BLE_LINK_PIN, GPIO_Mode_In_PU_NO_IT)  //LINK NO IT
 #define BLE_STA_READ()  (BLE_LINK_PORT->IDR & BLE_LINK_PIN) //read the state(active low)

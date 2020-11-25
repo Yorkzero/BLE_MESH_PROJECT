@@ -42,7 +42,7 @@ void AT_Test_Demo(void)
 }
 /*************************************************************
 Function Name       : link_sta_detec
-Function Description: ble Link state detection in IT
+Function Description: ble Link state detection
 Param_in            : 
 Param_out           : 
 Return Type         : 
@@ -56,14 +56,31 @@ void link_sta_detec(void)
     if (BLE_STA_READ())//high level
     {
         LEDG_L();
-        LEDR_H();
+        //LEDR_H();
     }
     if (!BLE_STA_READ())//low level
     {
         LEDG_H();
-        LEDR_L();
+        //LEDR_L();
     }
     
     
+}
+/*************************************************************
+Function Name       : key_led_run
+Function Description: use key to control led
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-25
+*************************************************************/
+void key_led_run(void)
+{
+    if(0 == key_flag)
+        LEDR_L();
+    if(1 == key_flag)
+        LEDR_H();
 }
 /*--------------------------- END --------------------------*/

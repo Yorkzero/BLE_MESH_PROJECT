@@ -15,3 +15,43 @@
 [2020-11-24 09:43:44]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
    在 ARM_Builder_V6.Program.Main(String[] args)
 
+[2020-11-25 15:00:02]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:00:26]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:04:29]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:22:53]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\bsp_conf.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:23:50]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\bsp_conf.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:24:38]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\bsp_conf.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:26:11]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:27:30]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:41:14]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:43:12]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:44:48]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.compileByMulThread(Int32 thrNum, CmdInfo[] cmds, List`1 doneList)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:50:38]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-25 15:52:01]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+

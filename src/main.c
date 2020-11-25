@@ -39,22 +39,25 @@ Author              : Yan
 Time                : 2020-11-20
 *************************************************************/
 int main(void)
-{
-#if (1 == CODE_VERSION)//Version 1 
+{ 
+    //system init
     bsp_clk_init();
     bsp_gpio_init();
-    bsp_uart_init();
+    bsp_uart_init(); 
+    key_flag = 0;
+#if (1 == CODE_VERSION)//Version 1 
     delay_ms_1(10);
     
     delay_ms_1(100);
     
-    LINK_ENABLE();
-    //KEY_ENABLE();
+    //LINK_ENABLE();
+    KEY_ENABLE();
     delay_ms_1(100);
     __enable_interrupt();
     while(1)
     {
-        
+       //link_sta_detec();
+       key_led_run();
         
     }
 #endif
@@ -63,9 +66,9 @@ int main(void)
 #ifdef USE_FULL_ASSERT
 void assert_failed(u8* file,u32 line)
 {
-  while(1)
-  {
-  }
+    while(1)
+    {
+    }
 }
 #endif
 /*--------------------------- END --------------------------*/

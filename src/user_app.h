@@ -47,6 +47,17 @@ Author              : Yan
 Time                : 2020-11-23
 *************************************************************/
 void link_sta_detec(void);
+/*************************************************************
+Function Name       : key_led_run
+Function Description: use key to control led
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-25
+*************************************************************/
+void key_led_run(void);
 /*------------------- Function Implement -------------------*/
 
 #endif

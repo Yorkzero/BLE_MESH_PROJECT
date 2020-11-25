@@ -17,7 +17,7 @@
         "optimization": "no",
         "data-mode": "medium",
         "code-mode": "small",
-        "runtime-lib": "normal",
+        "runtime-lib": "full",
         "destroy-cpp-static-object": true
     },
     "asm-compiler": {

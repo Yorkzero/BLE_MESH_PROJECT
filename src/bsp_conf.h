@@ -22,6 +22,7 @@ Date     : 2020-11-20
 
 
 /*------------------ Variable Declarations -----------------*/
+extern volatile uint8_t key_flag;   //key state flag
 
 
 /*------------------- Function Prototype -------------------*/
