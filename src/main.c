@@ -52,7 +52,7 @@ int main(void)
     __enable_interrupt();
     // BLE_AT_Init("myble", "S");
     AT_Send("+++a");
-    AT_Send("AT+NAME=PLZ\r\n");
+    AT_Get_State("NAME");
     AT_Send("AT+ENTM\r\n");
     while(1)
     {

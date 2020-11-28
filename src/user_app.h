@@ -80,6 +80,17 @@ log                 : 2020-11-28
 uint8_t BLE_AT_Init(char *name, char *mode);
 #endif
 /*************************************************************
+Function Name       : Norm_Send
+Function Description: Send data to master through BLE
+Param_in            : u8 *data
+Param_out           : 
+Return Type         : u16 tag 
+Note                : 0: succeed/1: failed
+Author              : Yan
+Time                : 2020-11-28
+*************************************************************/
+uint8_t Norm_Send(uint8_t *data);
+/*************************************************************
 Function Name       : key_led_run
 Function Description: use key to control led
 Param_in            : 

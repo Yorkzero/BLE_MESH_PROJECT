@@ -103,6 +103,7 @@ Param_in            : char *sta
                       UART/UARTIM/AUTOSLEEP/DEEPSLEEP/
                       HIBERNATE/HELLO/LINK/UUID etc.
 Param_out           : USART1_STA_buf[]
+                      remeber to clear the state buffer after used.
 Return Type         : u16 flag
 Note                : 0: succeed/1: failed
 Author              : Yan
@@ -115,7 +116,7 @@ uint8_t AT_Get_State(char *sta)
     uint8_t t;
     uint8_t retry = 10;
     uint8_t stalen = 0;
-    char *stastring = connect3("AT+", sta, "?\r\n");
+    char *stastring = connect2("AT+", sta);
     while (*sta)    //get the length of sta
     {
         *sta ++;
@@ -124,6 +125,7 @@ uint8_t AT_Get_State(char *sta)
     while (retry--)
     {
         USART1_SendWord(stastring);
+        USART1_SendWord("?\r\n");
         delay_ms_1(10);
         for ( t = 0; t < 10; t++)//50ms outtime
         {
@@ -136,8 +138,8 @@ uint8_t AT_Get_State(char *sta)
             temp = USART1_RX_STA & 0x7FFF;//get the length of data
             USART1_RX_STA = 0;//clear the state flag
             if (
-                ('O' == USART1_RX_buf[tag-4]) &&
-                ('K' == USART1_RX_buf[tag-3]) )
+                ('O' == USART1_RX_buf[temp-4]) &&
+                ('K' == USART1_RX_buf[temp-3]) )
             {
                 tag = 0;//enter succeed 
                 break;  
@@ -150,14 +152,14 @@ uint8_t AT_Get_State(char *sta)
         uint16_t i = 0;  
         for (t = 4 + stalen; t < (temp - 6); t++)
         {   //storage the relevant data in the buffer, empty it when access.   
-            USART1_STA_buf[i] = USART1_RX_buf[t-1];
+            USART1_STA_buf[i] = USART1_RX_buf[t];
             i++;
         }
     }
     if(0 == retry)tag = 1;//enter failed
     return tag;
 }
-#if DEBUG_STATUS
+#if DEBUG_STATUS//Currently unavailable
 /*************************************************************
 Function Name       : BLE_AT_Init
 Function Description: Bluetooth initialization
@@ -217,6 +219,21 @@ uint8_t BLE_AT_Init(char *name, char *mode)
     
 }
 #endif
+/*************************************************************
+Function Name       : Norm_Send
+Function Description: Send data to master through BLE
+Param_in            : u8 *data
+Param_out           : 
+Return Type         : u16 tag 
+Note                : 0: succeed/1: failed
+Author              : Yan
+Time                : 2020-11-28
+*************************************************************/
+uint8_t Norm_Send(uint8_t *data)
+{
+    uint16_t tag = 1;
+    
+}
 /*************************************************************
 Function Name       : key_led_run
 Function Description: use key to control led
