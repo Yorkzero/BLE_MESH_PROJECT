@@ -13,7 +13,8 @@ Date     : 2020-11-20
 #ifndef _MAIN_H_
 #define _MAIN_H_
 /*------------------------- Includes -----------------------*/
-#include <stdio.h>    /*<std io driver>*/
+#include <stdlib.h>   /*<std lib driver>*/
+#include <string.h>   /*<std string driver>*/
 #include "stm8l15x.h" /*<std peripharal driver>*/
 #include "bsp_conf.h" /*<program bsp driver>*/
 #include "user_app.h" /*<user application>*/
@@ -72,10 +73,36 @@ Date     : 2020-11-20
 #define PC_UNUSED_PIN   (GPIO_Pin_0 | GPIO_Pin_1)
 #define PD_UNUSED_PIN   (GPIO_Pin_0 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7)
 
+//AT Command declarations
+#define ENTER_AT()        USART1_SendWord("+++a")         //enter AT command mode
+#define EXIT_AT()         USART1_SendWord("AT+ENTM\r\n")   //exit AT command mode
+
 /*-------------------- Type Declarations -------------------*/
+enum          
+{
+    E_BEEP_MODE_INIT = 0,   //AT init
+    E_BEEP_MODE_ENDAT,      //AT finished
+    E_BEEP_MODE_TX,         //MCU transmitts the data
+    E_BEEP_MODE_RX,         //MCU receives the data
+    E_BEEP_MODE_WAIT        //beep closed after play over
+};
+enum 
+{
+    E_BEEP_PERIOD_10US = 0,
+    E_BEEP_PERIOD_20US,
+    E_BEEP_PERIOD_40US,
+    E_BEEP_PERIOD_50US,
+    E_BEEP_PERIOD_100US,
+    E_BEEP_PERIOD_500US,
+    E_BEEP_PERIOD_1MS,
+    E_BEEP_PERIOD_2MS,      //the value can not be used
+    E_BEEP_PERIOD_END
+};
 
 
 /*------------------ Variable Declarations -----------------*/
+
+
 //系统时钟值宏定义
 #define SYS_CLK_FREQ_16M       16000000
 #define SYS_CLK_FREQ_8M        8000000

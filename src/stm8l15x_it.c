@@ -214,7 +214,18 @@ INTERRUPT_HANDLER(EXTI4_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
-  // link_sta_detec();
+  // EXTI4_Sta_detec();
+  // switch (exti4_sta_flag)
+  // {
+  // case 0:
+  //   link_sta_detec();
+  //   break;
+  // case 1:
+  //   bsp_key_it();
+  //   break;
+  // default:
+  //   break;
+  // }
   bsp_key_it();
   EXTI_ClearITPendingBit(EXTI_IT_Pin4);
   
@@ -325,6 +336,7 @@ INTERRUPT_HANDLER(TIM3_UPD_OVF_TRG_BRK_USART3_TX_IRQHandler, 21)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  TIM3_IRQHandler();
 }
 /**
   * @brief Timer3 Capture/Compare /USART3 RX Interrupt routine.
@@ -370,7 +382,7 @@ INTERRUPT_HANDLER(TIM4_UPD_OVF_TRG_IRQHandler, 25)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
-    
+    bsp_beep_it();
 }
 /**
   * @brief SPI1 Interrupt routine.
@@ -394,6 +406,7 @@ INTERRUPT_HANDLER(USART1_TX_TIM5_UPD_OVF_TRG_BRK_IRQHandler, 27)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  
 }
 
 /**
@@ -406,11 +419,7 @@ INTERRUPT_HANDLER(USART1_RX_TIM5_CC_IRQHandler, 28)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
- if(USART_GetITStatus(USART1,USART_IT_RXNE) != RESET)        //检查指定的UART1中断是否发生。 
-    {
-      //USART_SendData8(USART1,USART_ReceiveData8(USART1));             //将接收的数据再用串口发送出去
-      USART_ClearITPendingBit(USART1,USART_IT_RXNE);            //清除UART1挂起标志
-    }
+  USART1_IRQHandler();
 }
 
 /**

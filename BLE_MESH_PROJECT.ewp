@@ -606,11 +606,11 @@
                 </option>
                 <option>
                     <name>IlinkIcfOverride</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$TOOLKIT_DIR$\config\lnkstm8.icf</state>
+                    <state>$TOOLKIT_DIR$\config\lnkstm8l151k4.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

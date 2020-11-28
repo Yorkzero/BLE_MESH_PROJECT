@@ -28,7 +28,7 @@
 
 
 /*----------------------- Variable Declarations -----------------------------*/
-volatile uint8_t rtc_delay_flag = 0;  //用于使用RTC延时唤醒时的标志位，需要在RTC唤醒中断中清0
+volatile char rtc_delay_flag = 0;  //用于使用RTC延时唤醒时的标志位，需要在RTC唤醒中断中清0
 
 /*----------------------- Function Prototype --------------------------------*/
 
@@ -274,6 +274,75 @@ void delay_ms_1(uint16_t n)
         delay_us_1(1000);
     }
 }
-
+char *connect2(char *a, char *b) {
+    char *c = (char *) malloc(strlen(a) + strlen(b) + 1); //'\0'结尾添加1
+    if (c == NULL) exit (1);
+    char *tempc;
+    char value[30] = "0";
+    char *tempv;
+    uint8_t t = 0;
+    memset(c, 0, sizeof(c));
+    tempc = c; 
+    free(c);
+    
+    while (*a != '\0') 
+    {
+        *tempc++ = *a++;
+    }
+    while ((*tempc++ = *b++) != '\0') 
+    {
+        ;
+    }
+    tempc = c;
+    
+    while (*c)
+    {
+        value[t++] = *c++;
+    }
+    tempv = value;
+    memset(c, 0, sizeof(c));
+    c = NULL;
+    memset(tempc, 0, sizeof(tempc));
+    free(tempc);
+    tempc = NULL;
+    return tempv;
+}
+char *connect3(char *a, char *b, char *d) {
+    char *c = (char *) malloc(strlen(a) + strlen(b) +strlen(d) + 1); //'\0'结尾添加1
+    if (c == NULL) exit (1);
+    char *tempc;
+    char value[30] = "0";
+    char *tempv;
+    uint8_t t = 0;
+    memset(c, 0, sizeof(c));
+    tempc = c; 
+    free(c);
+    
+    while (*a != '\0') 
+    {
+        *tempc++ = *a++;
+    }
+    while ((*tempc++ = *b++) != '\0') 
+    {
+        ;
+    }
+    while ((*tempc++ = *d++) != '\0') 
+    {
+        ;
+    }
+    tempc = c;
+    
+    while (*c)
+    {
+        value[t++] = *c++;
+    }
+    tempv = value;
+    memset(c, 0, sizeof(c));
+    c = NULL;
+    memset(tempc, 0, sizeof(tempc));
+    free(tempc);
+    tempc = NULL;
+    return tempv;
+}
 /*---------------------------------------------------------------------------*/
 

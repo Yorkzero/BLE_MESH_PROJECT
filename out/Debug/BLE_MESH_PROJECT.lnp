@@ -1,4 +1,4 @@
---silent --redirect _Scanf=_ScanfSmall --redirect _Printf=_PrintfTiny --config lnkstm8s103f3.icf --config_def _CSTACK_SIZE=0x0200 --config_def _HEAP_SIZE=0x0000 --debug_lib
+--silent --redirect _Scanf=_ScanfSmall --redirect _Printf=_PrintfTiny --config lnkstm8l151k4.icf --config_def _CSTACK_SIZE=0x0200 --config_def _HEAP_SIZE=0x0100 --debug_lib
 --map .\out\Debug\BLE_MESH_PROJECT.map
 .\out\Debug\stm8l15x_adc.o
 .\out\Debug\stm8l15x_aes.o

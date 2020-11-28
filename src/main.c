@@ -47,13 +47,19 @@ int main(void)
 
 #if (1 == CODE_VERSION)//Version 1     
     KEY_ENABLE();
+    // LINK_ENABLE();
     delay_ms_1(100);
     __enable_interrupt();
+    // BLE_AT_Init("myble", "S");
+    AT_Send("+++a");
+    AT_Send("AT+NAME=PLZ\r\n");
+    AT_Send("AT+ENTM\r\n");
     while(1)
     {
        //link_sta_detec();
        //key_led_run();
-        AT_Test_Demo();
+       // AT_Test_Demo();
+       
     }
 #endif
 }

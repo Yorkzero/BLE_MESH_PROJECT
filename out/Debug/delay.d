@@ -2,7 +2,7 @@
 .\out\Debug\delay.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\general_function\delay.c
 .\out\Debug\delay.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\general_function\delay.h
 .\out\Debug\delay.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.h
-.\out\Debug\delay.o: D:\IAR\stm8\inc\c\stdio.h
+.\out\Debug\delay.o: D:\IAR\stm8\inc\c\stdlib.h
 .\out\Debug\delay.o: D:\IAR\stm8\inc\c\ycheck.h
 .\out\Debug\delay.o: D:\IAR\stm8\inc\c\yvals.h
 .\out\Debug\delay.o: D:\IAR\stm8\inc\c\DLib_Defaults.h
@@ -11,7 +11,7 @@
 .\out\Debug\delay.o: D:\IAR\stm8\inc\c\xencoding_limits.h
 .\out\Debug\delay.o: D:\IAR\stm8\inc\c\DLib_Threads.h
 .\out\Debug\delay.o: D:\IAR\stm8\inc\c\ysizet.h
-.\out\Debug\delay.o: D:\IAR\stm8\inc\c\ystdio.h
+.\out\Debug\delay.o: D:\IAR\stm8\inc\c\string.h
 .\out\Debug\delay.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\STM8L15x_StdPeriph_Driver\inc\stm8l15x.h
 .\out\Debug\delay.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\stm8l15x_conf.h
 .\out\Debug\delay.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\STM8L15x_StdPeriph_Driver\inc\stm8l15x_adc.h

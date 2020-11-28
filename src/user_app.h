@@ -19,7 +19,7 @@ Date     : 2020-11-23
 extern volatile uint8_t AT_flag;//AT cmd recorder
 
 /*-------------------- Type Declarations -------------------*/
-
+#define DEBUG_STATUS 0 //record the status of function
 
 /*------------------ Variable Declarations -----------------*/
 
@@ -37,16 +37,48 @@ Time                : 2020-11-23
 *************************************************************/
 void AT_Test_Demo(void);
 /*************************************************************
-Function Name       : link_sta_detec
-Function Description: ble Link state detection
-Param_in            : 
+Function Name       : AT_Send
+Function Description: send AT cmd
+Param_in            : uint8_t *atcmd
 Param_out           : 
-Return Type         : 
-Note                : use green led to show the ble state
+Return Type         : u16 tag
+Note                : 0: succeed/1: failed
 Author              : Yan
-Time                : 2020-11-23
+Time                : 2020-11-27
 *************************************************************/
-void link_sta_detec(void);
+uint8_t AT_Send(uint8_t *atcmd);
+/*************************************************************
+Function Name       : AT_Get_State
+Function Description: use AT to get BLE state
+Param_in            : char *sta
+                      allow to query the following status:
+                      NAME/MODE/MAC/CIVER/TPL/PASS/PASSEN/
+                      UART/UARTIM/AUTOSLEEP/DEEPSLEEP/
+                      HIBERNATE/HELLO/LINK/UUID etc.
+Param_out           : USART1_STA_buf[]
+Return Type         : u16 flag
+Note                : 0: succeed/1: failed
+Author              : Yan
+Time                : 2020-11-27
+*************************************************************/
+uint8_t AT_Get_State(char *sta);
+#if DEBUG_STATUS
+/*************************************************************
+Function Name       : BLE_AT_Init
+Function Description: Bluetooth initialization
+Param_in            : char *name, char *mode
+                      M: master/S: slave/F: mesh/B: broadcast or iBeacon
+Param_out           : 
+Return Type         : u16 tag 
+Note                : 0: succeed/1: failed
+Author              : Yan
+Time                : 2020-11-27
+------------------------------------------
+log                 : 2020-11-28
+                      debug ing, can not be used!
+*************************************************************/
+uint8_t BLE_AT_Init(char *name, char *mode);
+#endif
 /*************************************************************
 Function Name       : key_led_run
 Function Description: use key to control led

@@ -55,3 +55,45 @@
 [2020-11-25 15:52:01]	link failed !, exit code: 2
    在 ARM_Builder_V6.Program.Main(String[] args)
 
+[2020-11-26 17:26:53]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-26 17:37:06]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 09:56:16]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\bsp_conf.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 11:32:59]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\general_function\delay.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 11:37:42]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 14:47:04]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 14:49:40]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 14:51:48]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 14:53:05]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-27 17:30:45]	link failed !, exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-28 10:34:29]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\general_function\delay.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-28 11:08:14]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\general_function\delay.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-28 11:40:48]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\general_function\delay.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-28 15:24:28]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+

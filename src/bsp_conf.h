@@ -16,8 +16,18 @@ Date     : 2020-11-20
 #include "main.h"
 
 /*----------- Global Definitions and Declarations ----------*/
-extern volatile uint8_t key_flag;   //key state flag
+//USART1相关宏定义
+#define USART1_RX_MAX_LEN      60  //最大接收缓存字节
+#define USART1_TX_MAX_LEN      60  //最大发送缓存字节
+#define USART1_STA_MAX_LEN     60  //最大状态量缓存字节
 
+extern volatile uint8_t key_flag;   //key state flag
+extern volatile uint8_t exti4_sta_flag;  //used to know which IO(PC4/PB4) triggers the IT. sta: 0(PC4), 1(PB4)
+extern volatile uint32_t beep_play_time; //record the beep play time
+extern volatile uint16_t USART1_RX_STA;  //record the receive data
+extern uint8_t USART1_RX_buf[USART1_RX_MAX_LEN];//USART1 receive buffer
+extern uint8_t USART1_TX_buf[USART1_TX_MAX_LEN];//USART1 transmitts buffer
+extern uint8_t USART1_STA_buf[USART1_STA_MAX_LEN];//USART1 state buffer
 /*-------------------- Type Declarations -------------------*/
 
 
@@ -60,6 +70,105 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_key_it(void);
 /*************************************************************
+Function Name       : link_sta_detec
+Function Description: ble Link state detection
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : use green led to show the ble state
+Author              : Yan
+Time                : 2020-11-23
+*************************************************************/
+void link_sta_detec(void);
+/*************************************************************
+Function Name       : EXTI4_Sta_detec
+Function Description: Used to avoid interruption detection confusion
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : PC4(LINK_STA)/PB4(KEY_STA) mixed
+Author              : Yan
+Time                : 2020-11-26
+*************************************************************/
+void EXTI4_Sta_detec(void);
+/*************************************************************
+Function Name       : bsp_tim3_init
+Function Description: initialization of TIM3
+Param_in            : u16 period
+Param_out           : 
+Return Type         : 
+Note                : used when usart1 receives data
+Author              : Yan
+Time                : 2020-11-27
+*************************************************************/
+void bsp_tim3_init(uint16_t period);
+/*************************************************************
+Function Name       : TIM3_IRQHandler
+Function Description: TIM3 IT function
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-27
+*************************************************************/
+void TIM3_IRQHandler(void);
+/*************************************************************
+Function Name       : bsp_tim4_init
+Function Description: initialization of TIM4
+Param_in            : u8 period
+Param_out           : 
+Return Type         : 
+Note                : used in beep play
+Author              : Yan
+Time                : 2020-11-26
+*************************************************************/
+void bsp_tim4_init(uint8_t period);
+/*************************************************************
+Function Name       : bsp_beep_it
+Function Description: beep ctrl function used in TIM4 IRQHandler
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : use this function to play different kinds of music
+Author              : Yan
+Time                : 2020-11-26
+*************************************************************/
+void bsp_beep_it(void);
+/*************************************************************
+Function Name       : bsp_beep_freq
+Function Description: set the frequency of beep
+Param_in            : u8 freq
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-27
+*************************************************************/
+void bsp_beep_freq(uint8_t freq);
+/*************************************************************
+Function Name       : bsp_beep_play_ms
+Function Description: used to control the play time
+Param_in            : u8 freq, u16 time
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-26
+*************************************************************/
+void bsp_beep_play_ms(uint8_t freq, uint16_t time);
+/*************************************************************
+Function Name       : beep_play
+Function Description: play different kinds of music
+Param_in            : style
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-26
+*************************************************************/
+void beep_play(uint8_t style);
+/*************************************************************
 Function Name       : bsp_uart_init
 Function Description: uart initialization
 Param_in            : 
@@ -70,6 +179,17 @@ Author              : Yan
 Time                : 2020-11-20
 *************************************************************/
 void bsp_uart_init(void);
+/*************************************************************
+Function Name       : USART1_IRQHandler
+Function Description: usart1 IT function
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-27
+*************************************************************/
+void USART1_IRQHandler(void);
 /*************************************************************
 Function Name       : USART1_SendWord
 Function Description: Transmits 8 bit *data through the USART1 peripharal

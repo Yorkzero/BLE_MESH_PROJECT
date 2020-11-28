@@ -33,7 +33,7 @@
 
 
 /*----------------------------- External Variables --------------------------*/
-extern volatile uint8_t rtc_delay_flag;  //用于使用RTC延时唤醒时的标志位，需要在RTC唤醒中断中清0
+extern volatile char rtc_delay_flag;  //用于使用RTC延时唤醒时的标志位，需要在RTC唤醒中断中清0
 
 /*------------------------ Global Function Prototypes -----------------------*/
 #if ((SYS_CLK_FREQ == SYS_CLK_FREQ_2M) || (SYS_CLK_FREQ == SYS_CLK_FREQ_4M) || (SYS_CLK_FREQ == SYS_CLK_FREQ_8M) || (SYS_CLK_FREQ == SYS_CLK_FREQ_16M))
@@ -93,7 +93,9 @@ extern void delay_ms_1(uint16_t n);
  ******************************************************************************/
 
 extern void delay_ms_2(uint16_t n);
-
+// extern char *Connect(char* str1, char* str2, char* p);
+extern char *connect2(char *a, char *b);
+extern char *connect3(char *a, char *b, char *d);
 #if 1
 //系统时钟1M时，指令周期为1us
 #if (SYS_CLK_FREQ == SYS_CLK_FREQ_1M)
