@@ -63,7 +63,7 @@ void bsp_gpio_init(void)
 
     //IT Priority
     // ITC_SetSoftwarePriority(EXTIB_IRQn,ITC_PriorityLevel_3); //key first
-    // ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_2); //led second
+    ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_2); //led second
     //Set unused pin mode: IN_PU_NO_IT
     GPIO_Init(GPIOA, PA_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
     GPIO_Init(GPIOB, PB_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
@@ -89,7 +89,7 @@ void bsp_clk_init(void)
     //peripharal clk state
     //comment when used
     CLK_PeripheralClockConfig(CLK_Peripheral_TIM1, DISABLE);
-    CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, DISABLE);
+    //CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, DISABLE);
     //CLK_PeripheralClockConfig(CLK_Peripheral_TIM3, DISABLE);
     //CLK_PeripheralClockConfig(CLK_Peripheral_TIM4,DISABLE);
     CLK_PeripheralClockConfig(CLK_Peripheral_I2C1, DISABLE);
@@ -111,12 +111,51 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_key_it(void)
 {
-    // if(0 == key_flag)
-    //     key_flag = 1;
-    // else
-    //     key_flag = 0;
-    // LEDR_R();
+    
     beep_play(E_BEEP_MODE_INIT);
+}
+/*************************************************************
+Function Name       : bsp_key_detec
+Function Description: used to detec press time
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : short press: <3s
+                      long press: >3s
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void bsp_key_detec(void)
+{
+    bsp_tim2_init(12500);//100ms upload
+    delay_ms_1(20);//avoid shaking
+    if(!KEY_READ())
+    {
+        TIM2_Cmd(ENABLE);
+        while(!KEY_READ());
+        TIM2_Cmd(DISABLE);
+    }
+    if (30 > key_flag)//short press
+    {
+        LEDG_R();
+        delay_ms_1(100);
+        LEDG_R();
+        delay_ms_1(100);
+        LEDG_R();
+        delay_ms_1(100);
+        LEDG_R();
+    }
+    if (30 <= key_flag)//long press
+    {
+        LEDR_R();
+        delay_ms_1(100);
+        LEDR_R();
+        delay_ms_1(100);
+        LEDR_R();
+        delay_ms_1(100);
+        LEDR_R();
+    }
+    key_flag = 0;
 }
 /*************************************************************
 Function Name       : link_sta_detec
@@ -161,6 +200,63 @@ void EXTI4_Sta_detec(void)
     }
     else
         exti4_sta_flag = 0; //ble link
+}
+/*************************************************************
+Function Name       : bsp_tim2_init
+Function Description: initialization of TIM2
+Param_in            : u16 period
+Param_out           : 
+Return Type         : 
+Note                : used when key state detecting
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void bsp_tim2_init(uint16_t period)
+{
+    TIM3_DeInit();
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, ENABLE); //enable the clk
+#if (SYS_CLK_FREQ_16M == SYS_CLK_FREQ)
+    TIM2_TimeBaseInit(TIM2_Prescaler_128, TIM2_CounterMode_Up, period);
+#elif (SYS_CLK_FREQ_8M == SYS_CLK_FREQ)
+    TIM2_TimeBaseInit(TIM2_Prescaler_64, TIM2_CounterMode_Up, period);
+#elif (SYS_CLK_FREQ_4M == SYS_CLK_FREQ)
+    TIM2_TimeBaseInit(TIM2_Prescaler_32, TIM2_CounterMode_Up, period);
+#elif (SYS_CLK_FREQ_2M == SYS_CLK_FREQ)
+    TIM2_TimeBaseInit(TIM2_Prescaler_16, TIM2_CounterMode_Up, period);
+#elif (SYS_CLK_FREQ_1M == SYS_CLK_FREQ)
+    TIM2_TimeBaseInit(TIM2_Prescaler_8, TIM2_CounterMode_Up, period);
+#else
+#error "Invalid system clk value..."
+#endif
+    TIM2_ARRPreloadConfig(ENABLE); //enable auto reload
+    TIM2_ClearFlag(TIM2_FLAG_Update);
+    TIM2_ITConfig(TIM2_IT_Update, ENABLE);
+    ITC_SetSoftwarePriority(TIM2_UPD_OVF_TRG_BRK_IRQn, ITC_PriorityLevel_3);//priority 3(HIGHEST)
+    TIM2_Cmd(DISABLE);
+}
+/*************************************************************
+Function Name       : TIM2_IRQHandler
+Function Description: TIM2 IT function
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void TIM2_IRQHandler(void)
+{
+    if(TIM2_GetFlagStatus(TIM2_FLAG_Update) != RESET)
+    {
+        if (255 == key_flag)
+            key_flag = 255;
+        else
+            key_flag++;
+        TIM2_SetCounter(0);//recounter
+        
+        
+    }
+    TIM2_ClearITPendingBit(TIM2_IT_Update);
 }
 /*************************************************************
 Function Name       : bsp_tim3_init
@@ -398,7 +494,7 @@ Function Description: usart1 IT function
 Param_in            : 
 Param_out           : 
 Return Type         : 
-Note                : 
+Note                : The interval between each data can not exceed 10ms
 Author              : Yan
 Time                : 2020-11-27
 *************************************************************/

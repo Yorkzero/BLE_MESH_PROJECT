@@ -38,18 +38,7 @@ Time                : 2020-11-23
 *************************************************************/
 void AT_Test_Demo(void)
 {
-    if (AT_flag != key_flag)
-    {
-        LEDR_H();
-        USART1_SendWord("+++a");
-        delay_ms_1(200);
-        USART1_SendWord("AT+NAME=YSY\r\n");
-        delay_ms_1(200);
-        
-        USART1_SendWord("AT+ENTM\r\n");
-        AT_flag = key_flag;
-        LEDR_L();
-    }
+    
     
 }
 /*************************************************************
@@ -124,7 +113,7 @@ uint8_t AT_Get_State(char *sta)
     }
     while (retry--)
     {
-        USART1_SendWord(stastring);
+        USART1_SendWord((uint8_t*) (stastring));
         USART1_SendWord("?\r\n");
         delay_ms_1(10);
         for ( t = 0; t < 10; t++)//50ms outtime
@@ -194,8 +183,8 @@ uint8_t BLE_AT_Init(char *name, char *mode)
         {
             tag = USART1_RX_STA & 0x7FFF;//get the length of data
             USART1_RX_STA = 0;//clear the state flag
-            //if (tag == 6
-            // && ('a' == USART1_RX_buf[0]) && ('+' == USART1_RX_buf[1]) && ('O' == USART1_RX_buf[2]) && ('K' == USART1_RX_buf[3]))
+            if (tag == 6
+            && ('a' == USART1_RX_buf[0]) && ('+' == USART1_RX_buf[1]) && ('O' == USART1_RX_buf[2]) && ('K' == USART1_RX_buf[3]))
             {
                 tag = 0;//enter succeed 
                 break;  
@@ -229,11 +218,10 @@ Note                : 0: succeed/1: failed
 Author              : Yan
 Time                : 2020-11-28
 *************************************************************/
-uint8_t Norm_Send(uint8_t *data)
-{
-    uint16_t tag = 1;
-    
-}
+// uint8_t Norm_Send(uint8_t *data)
+// {
+//     return *data;
+// }
 /*************************************************************
 Function Name       : key_led_run
 Function Description: use key to control led

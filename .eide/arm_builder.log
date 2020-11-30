@@ -97,3 +97,38 @@
 [2020-11-28 15:24:28]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
    在 ARM_Builder_V6.Program.Main(String[] args)
 
+[2020-11-30 11:11:12]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:11:50]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:12:16]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:13:00]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:15:32]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:15:50]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:16:16]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:16:28]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-11-30 11:18:06]	无法将类型为“Newtonsoft.Json.Linq.JArray”的对象强制转换为类型“Newtonsoft.Json.Linq.JObject”。
+   在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
+   在 ARM_Builder_V6.Program.Main(String[] args)
+

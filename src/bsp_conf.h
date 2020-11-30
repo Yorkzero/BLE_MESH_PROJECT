@@ -70,6 +70,18 @@ Time                : 2020-11-20
 *************************************************************/
 void bsp_key_it(void);
 /*************************************************************
+Function Name       : bsp_key_detec
+Function Description: used to detec press time
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : short press: <3s
+                      long press: >3s
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void bsp_key_detec(void);
+/*************************************************************
 Function Name       : link_sta_detec
 Function Description: ble Link state detection
 Param_in            : 
@@ -91,6 +103,28 @@ Author              : Yan
 Time                : 2020-11-26
 *************************************************************/
 void EXTI4_Sta_detec(void);
+/*************************************************************
+Function Name       : bsp_tim2_init
+Function Description: initialization of TIM2
+Param_in            : u16 period
+Param_out           : 
+Return Type         : 
+Note                : used when key state detecting
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void bsp_tim2_init(uint16_t period);
+/*************************************************************
+Function Name       : TIM2_IRQHandler
+Function Description: TIM2 IT function
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void TIM2_IRQHandler(void);
 /*************************************************************
 Function Name       : bsp_tim3_init
 Function Description: initialization of TIM3
@@ -185,7 +219,7 @@ Function Description: usart1 IT function
 Param_in            : 
 Param_out           : 
 Return Type         : 
-Note                : 
+Note                : The interval between each data can not exceed 10ms
 Author              : Yan
 Time                : 2020-11-27
 *************************************************************/

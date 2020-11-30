@@ -51,9 +51,9 @@ int main(void)
     delay_ms_1(100);
     __enable_interrupt();
     // BLE_AT_Init("myble", "S");
-    AT_Send("+++a");
-    AT_Get_State("NAME");
-    AT_Send("AT+ENTM\r\n");
+    // AT_Send("+++a");
+    // AT_Get_State("NAME");
+    // AT_Send("AT+ENTM\r\n");
     while(1)
     {
        //link_sta_detec();
