@@ -50,16 +50,13 @@ int main(void)
     // LINK_ENABLE();
     delay_ms_1(100);
     __enable_interrupt();
-    // BLE_AT_Init("myble", "S");
     // AT_Send("+++a");
-    // AT_Get_State("NAME");
+    // // AT_Send("AT+MODE?\r\n");
     // AT_Send("AT+ENTM\r\n");
     while(1)
     {
-       //link_sta_detec();
-       //key_led_run();
-       // AT_Test_Demo();
-       
+       BLE_status_run();
+       key_led_run();
     }
 #endif
 }

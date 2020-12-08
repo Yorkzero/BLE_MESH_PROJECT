@@ -3013,7 +3013,6 @@ Comments :    The idea is to handle directly with the bit name. For that, it is
 #define BitSet(BIT)  ( *((unsigned char *) (AREA+(BIT)/8)) |= (1<<(7-(BIT)%8)) )
 #define BitVal(BIT)  ( *((unsigned char *) (AREA+(BIT)/8)) & (1<<(7-(BIT)%8)) )
 
-
 #endif /* __STM8L15x_H */
 
 /**
@@ -3025,3 +3024,4 @@ Comments :    The idea is to handle directly with the bit name. For that, it is
   */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

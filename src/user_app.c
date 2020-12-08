@@ -3,7 +3,7 @@ Copyright (c) 2020 Shawn Yan, All rights reserved
 -------------------------------------------------------------
 File Name: user_app.c
 
-Desc     : Ó¦ÓÃ²ãº¯Êý
+Desc     : user application
 
 Author   : Shawn Yan
 
@@ -18,9 +18,8 @@ Date     : 2020-11-23
 
 /*-------------------- Type Declarations -------------------*/
 
-
 /*------------------ Variable Declarations -----------------*/
-volatile uint8_t AT_flag = 0;//AT cmd recorder
+volatile uint8_t BLE_STA_flag = 1;//BLE state flag 0:MESH, 1:NON-MESH
 
 /*------------------- Function Prototype -------------------*/
 
@@ -40,6 +39,7 @@ void AT_Test_Demo(void)
 {
     
     
+    
 }
 /*************************************************************
 Function Name       : AT_Send
@@ -55,6 +55,9 @@ uint8_t AT_Send(uint8_t *atcmd)
 {
     uint16_t tag = 1;
     uint8_t t;
+    // uint16_t k;
+    USART1_RX_STA = 0;
+    memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
     uint8_t retry = 10;//number of AT command sending attempts
     while (retry--)
     {
@@ -65,13 +68,16 @@ uint8_t AT_Send(uint8_t *atcmd)
             if(USART1_RX_STA & 0x8000)
                 break;
             delay_ms_1(5);
+            // k = TIM3_GetCounter();
         }
         if ((USART1_RX_STA & 0x8000))//receive the data
         {
             tag = USART1_RX_STA & 0x7FFF;//get the length of data
             USART1_RX_STA = 0;//clear the state flag
-            if (('O' == USART1_RX_buf[tag-4]) &&
-                ('K' == USART1_RX_buf[tag-3]) )
+            if ((('O' == USART1_RX_buf[tag-4]) &&
+                ('K' == USART1_RX_buf[tag-3])) ||
+                (('o' == USART1_RX_buf[tag-4]) &&
+                ('k' == USART1_RX_buf[tag-3])))
             {
                 tag = 0;//enter succeed
                 break;
@@ -79,6 +85,7 @@ uint8_t AT_Send(uint8_t *atcmd)
         }
     }
     //clear the rx buffer
+    USART1_RX_STA = 0;
     memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
     if(0 == retry)tag = 1;//enter failed
     return tag;
@@ -145,6 +152,8 @@ uint8_t AT_Get_State(char *sta)
             i++;
         }
     }
+    //clear the rx buffer
+    memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
     if(0 == retry)tag = 1;//enter failed
     return tag;
 }
@@ -209,19 +218,94 @@ uint8_t BLE_AT_Init(char *name, char *mode)
 }
 #endif
 /*************************************************************
-Function Name       : Norm_Send
-Function Description: Send data to master through BLE
-Param_in            : u8 *data
+Function Name       : BLE_status_it
+Function Description: Use peripherals to express BLE status
+Param_in            : 
 Param_out           : 
-Return Type         : u16 tag 
-Note                : 0: succeed/1: failed
+Return Type         : 
+Note                : 
 Author              : Yan
-Time                : 2020-11-28
+Time                : 2020-11-30
 *************************************************************/
-// uint8_t Norm_Send(uint8_t *data)
-// {
-//     return *data;
-// }
+void BLE_status_it(void)
+{
+/**
+   Non-MESH mode
+            NAME: Dx >>>Device x (x=1, 2, 3,...)
+        LED MODE: Flashing LEDG in freq 1000ms
+        KEY MODE: Enter MESH Mode through short press(<3s)
+       LINK PROC: Flashing LEDR in freq 100ms(NU)
+         LINK OK: The LEDR(G) flash alternately for 1.5s with beep play
+        LINK ERR: The buzzer beeps for 2s and the LEDR is on
+       MESH mode
+            NAME: Nx >>>Node x (x=1, 2, 3,...)
+        LED MODE: Flashing LEDR in freq 1000ms
+        KEY MODE: Exit MESH Mode through long press(>3s)
+    DISLINK PROC: Flashing LEDG in freq 100ms(NU)
+      DISLINK OK: The LEDR(G) flash alternately for 1.5s with beep play
+     DISLINK ERR: The buzzer beeps for 2s and the LEDG is on   
+**/
+    uint8_t i = 1;
+    if (0 == AT_Send("+++a"))//enter AT mode
+    {
+        if (0 == AT_Get_State("MODE"))//get the mode
+        {
+            if ('e' == USART1_STA_buf[1])//MESH mode
+            {
+                memset(USART1_STA_buf, 0, sizeof(USART1_STA_buf));//clear the buffer
+                BLE_STA_flag = 0;
+            }
+            else//Non-MESH mode
+            {
+                memset(USART1_STA_buf, 0, sizeof(USART1_STA_buf));//clear the buffer
+                BLE_STA_flag = 1;
+            }
+            
+        }
+        while (AT_Send("AT+ENTM\r\n"))//exit AT mode
+        {
+            if((i++) >= 5)
+            {                
+                USART1_SendWord("Unable to exit AT mode...\r\n");
+                break;
+            }
+        }
+    }
+    else
+        USART1_SendWord("Unable to get the state...\r\n");
+}
+/*************************************************************
+Function Name       : BLE_status_run
+Function Description: show the BLE status in main
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-04
+*************************************************************/
+void BLE_status_run(void)
+{
+    // LEDR_L();
+    // LEDG_L();
+    if (1 == BLE_STA_flag)//NON-MESH
+    {
+        
+        LEDG_R();
+        delay_ms_1(500);
+        LEDG_R();
+        delay_ms_1(500);
+    }
+    else
+    {
+        
+        LEDR_R();
+        delay_ms_1(500);
+        LEDR_R();
+        delay_ms_1(500);
+    }
+    
+}
 /*************************************************************
 Function Name       : key_led_run
 Function Description: use key to control led
@@ -231,12 +315,84 @@ Return Type         :
 Note                : 
 Author              : Yan
 Time                : 2020-11-25
+--------------------------------------------------------------
+log                 : 2020-12-7
+                      This function changed to control LED group
 *************************************************************/
 void key_led_run(void)
 {
-    if(0 == key_flag)
-        LEDR_L();
-    if(1 == key_flag)
-        LEDR_H();
+    if((USART1_RX_STA & (uint16_t)(1<<15)) == 0)//No message
+        return;    
+    if(('0' != USART1_RX_buf[0]) && ('1' != USART1_RX_buf[0]))//non-key message
+    {
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        return;
+    }
+    if((USART1_RX_STA & (uint16_t)(1<<15)) == 32768)//Get key message
+    {
+#if (1 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[0])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[0])
+            LEDG_L();
+#endif
+#if (2 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[1])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[1])
+            LEDG_L();
+#endif
+#if (3 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[2])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[2])
+            LEDG_L();
+#endif
+#if (4 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[3])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[3])
+            LEDG_L();
+#endif
+#if (5 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[4])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[4])
+            LEDG_L();
+#endif
+#if (6 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[5])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[5])
+            LEDG_L();
+#endif
+#if (7 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[6])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[6])
+            LEDG_L();
+#endif
+#if (8 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[7])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[7])
+            LEDG_L();
+#endif
+#if (9 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[8])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[8])
+            LEDG_L();
+#endif
+#if (10 == DEVICE_ID)            
+        if ('1' == USART1_RX_buf[9])
+            LEDG_H();
+        if ('0' == USART1_RX_buf[9])
+            LEDG_L();
+#endif
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+    }                      
 }
 /*--------------------------- END --------------------------*/

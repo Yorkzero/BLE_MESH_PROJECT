@@ -214,20 +214,10 @@ INTERRUPT_HANDLER(EXTI4_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
-  // EXTI4_Sta_detec();
-  // switch (exti4_sta_flag)
-  // {
-  // case 0:
-  //   link_sta_detec();
-  //   break;
-  // case 1:
-  //   bsp_key_it();
-  //   break;
-  // default:
-  //   break;
-  // }
-  // bsp_key_it();
+ 
   bsp_key_detec();
+  
+  // USART1_SendWord("hello\r\n");
   EXTI_ClearITPendingBit(EXTI_IT_Pin4);
   
 }

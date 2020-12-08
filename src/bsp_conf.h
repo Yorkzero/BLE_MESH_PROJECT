@@ -235,7 +235,17 @@ Author              : Yan
 Time                : 2020-11-23
 *************************************************************/
 void USART1_SendWord(uint8_t *Data);
-
+/*************************************************************
+Function Name       : MESH_cmd
+Function Description: enable or disable mesh
+Param_in            : FunctionalState NewState
+Param_out           : 
+Return Type         : 
+Note                : This parameter can be ENABLE or DISABLE
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void MESH_cmd(FunctionalState NewState);
 
 //Ä£Äâ´®¿Ú´òÓ¡
 #if (SIM_UART_PRINTF_EN)

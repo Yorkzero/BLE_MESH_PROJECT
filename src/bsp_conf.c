@@ -62,8 +62,7 @@ void bsp_gpio_init(void)
     EXTI_SetPinSensitivity(KEY_EXTI_PIN, EXTI_Trigger_Falling); //key trigger falling
 
     //IT Priority
-    // ITC_SetSoftwarePriority(EXTIB_IRQn,ITC_PriorityLevel_3); //key first
-    ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_2); //led second
+    ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_1); //key 1
     //Set unused pin mode: IN_PU_NO_IT
     GPIO_Init(GPIOA, PA_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
     GPIO_Init(GPIOB, PB_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
@@ -112,7 +111,7 @@ Time                : 2020-11-20
 void bsp_key_it(void)
 {
     
-    beep_play(E_BEEP_MODE_INIT);
+    beep_play(E_BEEP_MODE_ERR);
 }
 /*************************************************************
 Function Name       : bsp_key_detec
@@ -127,6 +126,8 @@ Time                : 2020-11-30
 *************************************************************/
 void bsp_key_detec(void)
 {
+    LEDG_L();
+    LEDR_L();
     bsp_tim2_init(12500);//100ms upload
     delay_ms_1(20);//avoid shaking
     if(!KEY_READ())
@@ -134,27 +135,24 @@ void bsp_key_detec(void)
         TIM2_Cmd(ENABLE);
         while(!KEY_READ());
         TIM2_Cmd(DISABLE);
+        CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, DISABLE); //enable the clk
     }
     if (30 > key_flag)//short press
     {
-        LEDG_R();
-        delay_ms_1(100);
-        LEDG_R();
-        delay_ms_1(100);
-        LEDG_R();
-        delay_ms_1(100);
-        LEDG_R();
+        USART1_SendWord("::1111111111");
+        // LEDG_H();
+        // LEDR_H();
     }
     if (30 <= key_flag)//long press
     {
-        LEDR_R();
-        delay_ms_1(100);
-        LEDR_R();
-        delay_ms_1(100);
-        LEDR_R();
-        delay_ms_1(100);
-        LEDR_R();
+        if (1 == BLE_STA_flag)
+            MESH_cmd(ENABLE);
+        if (0 == BLE_STA_flag)
+            MESH_cmd(DISABLE);
+        BLE_status_it();
     }
+    
+    
     key_flag = 0;
 }
 /*************************************************************
@@ -213,7 +211,7 @@ Time                : 2020-11-30
 *************************************************************/
 void bsp_tim2_init(uint16_t period)
 {
-    TIM3_DeInit();
+    TIM2_DeInit();
     CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, ENABLE); //enable the clk
 #if (SYS_CLK_FREQ_16M == SYS_CLK_FREQ)
     TIM2_TimeBaseInit(TIM2_Prescaler_128, TIM2_CounterMode_Up, period);
@@ -249,12 +247,10 @@ void TIM2_IRQHandler(void)
     if(TIM2_GetFlagStatus(TIM2_FLAG_Update) != RESET)
     {
         if (255 == key_flag)
-            key_flag = 255;
+            TIM2_Cmd(DISABLE);
         else
             key_flag++;
-        TIM2_SetCounter(0);//recounter
-        
-        
+        TIM2_SetCounter(0);//recounter    
     }
     TIM2_ClearITPendingBit(TIM2_IT_Update);
 }
@@ -308,6 +304,7 @@ void TIM3_IRQHandler(void)
         USART1_RX_STA |= (uint16_t) 1<<15;//receive finished
         TIM3_ClearITPendingBit(TIM3_IT_Update);
         TIM3_Cmd(DISABLE);
+        return;
     }
 }
 /*************************************************************
@@ -340,7 +337,7 @@ void bsp_tim4_init(uint8_t period)
     TIM4_ARRPreloadConfig(ENABLE); //enable auto reload
     TIM4_ClearFlag(TIM4_FLAG_Update);
     TIM4_ITConfig(TIM4_IT_Update, ENABLE);
-    ITC_SetSoftwarePriority(TIM4_UPD_OVF_TRG_IRQn, ITC_PriorityLevel_1);//priority 1
+    ITC_SetSoftwarePriority(TIM4_UPD_OVF_TRG_IRQn, ITC_PriorityLevel_3);//priority 3
     TIM4_Cmd(ENABLE);
 }
 /*************************************************************
@@ -363,6 +360,7 @@ void bsp_beep_it(void)
     else
     {
         BEEP_L();
+        TIM4_Cmd(DISABLE);
         TIM4_DeInit();
         CLK_PeripheralClockConfig(CLK_Peripheral_TIM4,DISABLE);
     }
@@ -428,22 +426,45 @@ Time                : 2020-11-26
 *************************************************************/
 void beep_play(uint8_t style)
 {
+    LEDG_L();
+    LEDR_L();
     switch (style)
     {
     case E_BEEP_MODE_INIT:
         bsp_beep_play_ms(E_BEEP_PERIOD_500US, 300);
         delay_ms_1(300);
-        bsp_beep_play_ms(E_BEEP_PERIOD_100US, 300);
+        bsp_beep_play_ms(E_BEEP_PERIOD_500US, 300);
         goto EXIT;
         break;
-    case E_BEEP_MODE_ENDAT:
-        /* code */
+    case E_BEEP_MODE_ERR:
+        bsp_beep_play_ms(E_BEEP_PERIOD_100US, 2000);
+        LEDR_H();
+        delay_ms_1(2000);
+        LEDR_L();
         break;
-    case E_BEEP_MODE_TX:
-        /* code */
+    case E_BEEP_MODE_SUCCESS:
+        LEDR_L();
+        LEDG_H();
+        delay_ms_1(100);
+        bsp_beep_play_ms(E_BEEP_PERIOD_100US, 250);
+        LEDR_H();
+        LEDG_L();
+        delay_ms_1(100);
+        bsp_beep_play_ms(E_BEEP_PERIOD_100US, 250);
+        LEDR_L();
+        LEDG_H();
+        delay_ms_1(100);
+        bsp_beep_play_ms(E_BEEP_PERIOD_100US, 250);
+        LEDR_H();
+        LEDG_L();
+        delay_ms_1(100);
+        bsp_beep_play_ms(E_BEEP_PERIOD_100US, 250);
+        LEDR_L();
+        LEDG_L();
+        goto EXIT;
         break;
     case E_BEEP_MODE_RX:
-        /* code */
+        
         break;
     case E_BEEP_MODE_WAIT:
 
@@ -483,7 +504,7 @@ void bsp_uart_init(void)
 
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
     // USART_ITConfig(USART1, USART_IT_OR, ENABLE);
-    ITC_SetSoftwarePriority(USART1_RX_IRQn, ITC_PriorityLevel_1);//priority 1
+    ITC_SetSoftwarePriority(USART1_RX_IRQn, ITC_PriorityLevel_2);//priority 2
     USART_Cmd(USART1, ENABLE);
     USART1_RX_STA = 0;
     bsp_tim3_init(1250);//Enter interrupt after 10ms
@@ -517,7 +538,7 @@ void USART1_IRQHandler(void)
                 USART1_RX_STA |= (uint16_t) 1<<15;//enforce finish receive 
         }
 
-        // USART_ClearITPendingBit(USART1,USART_IT_RXNE);            //Clear UART1 pending flag
+        USART_ClearITPendingBit(USART1,USART_IT_RXNE);            //Clear UART1 pending flag
     }
 }
 /*************************************************************
@@ -537,6 +558,140 @@ void USART1_SendWord(uint8_t *Data)
         USART_SendData8(USART1, *Data++);
         while (!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
     }
+}
+/*************************************************************
+Function Name       : MESH_cmd
+Function Description: enable or disable mesh
+Param_in            : FunctionalState NewState                      
+Param_out           : 
+Return Type         : 
+Note                : This parameter can be ENABLE or DISABLE
+Author              : Yan
+Time                : 2020-11-30
+*************************************************************/
+void MESH_cmd(FunctionalState NewState)
+{
+    assert_param(IS_FUNCTIONAL_STATE(NewState));
+    uint8_t i = 0;
+    if (ENABLE == NewState)
+    {
+        if (0 == AT_Send("+++a"))//Enter AT Mode
+        {
+            // delay_ms_1(100);
+#if (1 == DEVICE_ID)            
+            AT_Send("AT+NAME=N1\r\n");//NODE 1 in MESH
+            // delay_ms_1(100);
+#endif
+#if (2 == DEVICE_ID)            
+            AT_Send("AT+NAME=N2\r\n");//NODE 2 in MESH
+            // delay_ms_1(100);
+#endif
+#if (3 == DEVICE_ID)            
+            AT_Send("AT+NAME=N3\r\n");//NODE 3 in MESH
+            // delay_ms_1(100);
+#endif
+#if (4 == DEVICE_ID)            
+            AT_Send("AT+NAME=N4\r\n");//NODE 4 in MESH
+            // delay_ms_1(100);
+#endif
+#if (5 == DEVICE_ID)            
+            AT_Send("AT+NAME=N5\r\n");//NODE 5 in MESH
+            // delay_ms_1(100);
+#endif
+#if (6 == DEVICE_ID)            
+            AT_Send("AT+NAME=N6\r\n");//NODE 6 in MESH
+            // delay_ms_1(100);
+#endif
+#if (7 == DEVICE_ID)            
+            AT_Send("AT+NAME=N7\r\n");//NODE 7 in MESH
+            // delay_ms_1(100);
+#endif
+#if (8 == DEVICE_ID)            
+            AT_Send("AT+NAME=N8\r\n");//NODE 8 in MESH
+            // delay_ms_1(100);
+#endif
+#if (9 == DEVICE_ID)            
+            AT_Send("AT+NAME=N9\r\n");//NODE 9 in MESH
+            // delay_ms_1(100);
+#endif
+#if (10 == DEVICE_ID)            
+            AT_Send("AT+NAME=N10\r\n");//NODE 10 in MESH
+            // delay_ms_1(100);
+#endif
+            AT_Send("AT+PASS=111111\r\n");//Set matching password: 111111
+            // delay_ms_1(100);
+            while(0 != AT_Send("AT+MODE=F\r\n"))//Enter AT Mode
+            {
+                if ((i++) >= 5)
+                {
+                    i = 0;
+                    USART1_SendWord("Enter MESH error...\r\n");
+                    beep_play(E_BEEP_MODE_ERR);
+                    memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+                    return;
+                }    
+            }
+            USART1_SendWord("Enter MESH successfully...\r\n");
+            beep_play(E_BEEP_MODE_SUCCESS);
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        }
+        else
+        {
+            USART1_SendWord("MESH ERROR...\r\n");
+        }    
+    }
+    if (DISABLE == NewState)    
+    {   
+        if (0 == AT_Send("+++a"))//Enter AT Mode
+        {
+#if (1 == DEVICE_ID)            
+            AT_Send("AT+NAME=D1\r\n");//DEVICE 1 out MESH
+#endif
+#if (2 == DEVICE_ID)            
+            AT_Send("AT+NAME=D2\r\n");//DEVICE 2 out MESH
+#endif
+#if (3 == DEVICE_ID)            
+            AT_Send("AT+NAME=D3\r\n");//DEVICE 3 out MESH
+#endif
+#if (4 == DEVICE_ID)            
+            AT_Send("AT+NAME=D4\r\n");//DEVICE 4 out MESH
+#endif
+#if (5 == DEVICE_ID)            
+            AT_Send("AT+NAME=D5\r\n");//DEVICE 5 out MESH
+#endif
+#if (6 == DEVICE_ID)            
+            AT_Send("AT+NAME=D6\r\n");//DEVICE 6 out MESH
+#endif
+#if (7 == DEVICE_ID)            
+            AT_Send("AT+NAME=D7\r\n");//DEVICE 7 out MESH
+#endif
+#if (8 == DEVICE_ID)            
+            AT_Send("AT+NAME=D8\r\n");//DEVICE 8 out MESH
+#endif
+#if (9 == DEVICE_ID)            
+            AT_Send("AT+NAME=D9\r\n");//DEVICE 9 out MESH
+#endif
+#if (10 == DEVICE_ID)            
+            AT_Send("AT+NAME=D10\r\n");//DEVICE 10 out MESH
+#endif
+            AT_Send("AT+MODE=S\r\n");//mode:Slave
+            while(AT_Send("AT+ENTM\r\n"))//Exit AT Mode
+            {
+                if ((i++) >= 5)
+                {
+                    i = 0;
+                    USART1_SendWord("Exit MESH error...\r\n");
+                    beep_play(E_BEEP_MODE_ERR);
+                    return;
+                }
+            }
+            USART1_SendWord("Exit MESH successfully...\r\n");
+            beep_play(E_BEEP_MODE_SUCCESS);
+        }
+        else
+            USART1_SendWord("NON-MESH ERROR...\r\n");
+    }
+
 }
 
 /*************************************************************

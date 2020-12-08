@@ -15,6 +15,7 @@ Date     : 2020-11-20
 /*------------------------- Includes -----------------------*/
 #include <stdlib.h>   /*<std lib driver>*/
 #include <string.h>   /*<std string driver>*/
+#include <stdio.h>   /*<std io driver>*/
 #include "stm8l15x.h" /*<std peripharal driver>*/
 #include "bsp_conf.h" /*<program bsp driver>*/
 #include "user_app.h" /*<user application>*/
@@ -81,8 +82,8 @@ Date     : 2020-11-20
 enum          
 {
     E_BEEP_MODE_INIT = 0,   //AT init
-    E_BEEP_MODE_ENDAT,      //AT finished
-    E_BEEP_MODE_TX,         //MCU transmitts the data
+    E_BEEP_MODE_ERR,        //MESH error
+    E_BEEP_MODE_SUCCESS,    //MESH success
     E_BEEP_MODE_RX,         //MCU receives the data
     E_BEEP_MODE_WAIT        //beep closed after play over
 };
@@ -119,6 +120,7 @@ enum
 
 #define SIM_UART_PRINTF_EN 0 //模拟打印开关
 #define CODE_VERSION 1       //用于版本号控制
+#define DEVICE_ID 1          //用于匹配目前的设备ID
 /*------------------- Function Prototype -------------------*/
 
 

@@ -132,3 +132,15 @@
    在 ARM_Builder_V6.CmdGenerator.genOutputCommand(String linkerOutputFile)
    在 ARM_Builder_V6.Program.Main(String[] args)
 
+[2020-12-04 16:01:56]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\stm8l15x_it.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-12-04 16:14:24]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\main.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-12-07 09:43:44]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+
+[2020-12-07 09:44:38]	compilation failed at : "d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\src\user_app.c", exit code: 2
+   在 ARM_Builder_V6.Program.Main(String[] args)
+

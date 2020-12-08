@@ -30,4 +30,4 @@
 .\out\Debug\stm8l15x_rst.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\STM8L15x_StdPeriph_Driver\inc\stm8l15x_usart.h
 .\out\Debug\stm8l15x_rst.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\STM8L15x_StdPeriph_Driver\inc\stm8l15x_wfe.h
 .\out\Debug\stm8l15x_rst.o: d:\myfile_yan\BLE-MESH\BLE_MESH_PROJECT\STM8L15x_StdPeriph_Driver\inc\stm8l15x_wwdg.h
-.\out\Debug\stm8l15x_rst.o: D:\IAR\stm8\inc\c\intrinsics.h
+.\out\Debug\stm8l15x_rst.o: d:\IAR\stm8\inc\c\intrinsics.h

@@ -16,7 +16,7 @@ Date     : 2020-11-23
 #include "main.h"
 
 /*----------- Global Definitions and Declarations ----------*/
-extern volatile uint8_t AT_flag;//AT cmd recorder
+extern volatile uint8_t BLE_STA_flag;//BLE state flag 0:MESH, 1:NON-MESH
 
 /*-------------------- Type Declarations -------------------*/
 #define DEBUG_STATUS 0 //record the status of function
@@ -80,16 +80,27 @@ log                 : 2020-11-28
 uint8_t BLE_AT_Init(char *name, char *mode);
 #endif
 /*************************************************************
-Function Name       : Norm_Send
-Function Description: Send data to master through BLE
-Param_in            : u8 *data
+Function Name       : BLE_status_it
+Function Description: Use peripherals to express BLE status
+Param_in            : 
 Param_out           : 
-Return Type         : u16 tag 
-Note                : 0: succeed/1: failed
+Return Type         : 
+Note                : 
 Author              : Yan
-Time                : 2020-11-28
+Time                : 2020-11-30
 *************************************************************/
-uint8_t Norm_Send(uint8_t *data);
+void BLE_status_it(void);
+/*************************************************************
+Function Name       : BLE_status_run
+Function Description: show the BLE status in main
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-04
+*************************************************************/
+void BLE_status_run(void);
 /*************************************************************
 Function Name       : key_led_run
 Function Description: use key to control led
