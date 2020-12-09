@@ -20,7 +20,9 @@ Date     : 2020-11-23
 
 /*------------------ Variable Declarations -----------------*/
 volatile uint8_t BLE_STA_flag = 1;//BLE state flag 0:MESH, 1:NON-MESH
-
+#if (1 == DEVICE_ID)
+volatile uint8_t ctrl_string[] = "::0000000000";//used to control LED group
+#endif
 /*------------------- Function Prototype -------------------*/
 
 
@@ -307,8 +309,8 @@ void BLE_status_run(void)
     
 }
 /*************************************************************
-Function Name       : key_led_run
-Function Description: use key to control led
+Function Name       : user_app_run
+Function Description: use key/phone to control led
 Param_in            : 
 Param_out           : 
 Return Type         : 
@@ -318,9 +320,13 @@ Time                : 2020-11-25
 --------------------------------------------------------------
 log                 : 2020-12-7
                       This function changed to control LED group
+                      2020-12-9
+                      This function added the features of phone 
+                      control LED group
 *************************************************************/
-void key_led_run(void)
+void user_app_run(void)
 {
+#if (RELAY_DEV != DEVICE_ID)
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 0)//No message
         return;    
     if(('0' != USART1_RX_buf[0]) && ('1' != USART1_RX_buf[0]))//non-key message
@@ -393,6 +399,62 @@ void key_led_run(void)
 #endif
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
-    }                      
+        
+    }
+#endif
+#if (RELAY_DEV == DEVICE_ID)
+    if(0 == BLE_STA_flag)//process msg when enter mesh mode
+    {
+        delay_ms_1(100);
+        //init
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        //process
+        uint8_t *temp_string;//intermediate variables
+        temp_string = (uint8_t *)ctrl_string;
+        USART1_SendWord(temp_string);
+        delay_ms_1(500);
+        MESH_cmd(DISABLE);
+        BLE_status_it();
+    }
+    if((USART1_RX_STA & (uint16_t)(1<<15)) == 0)//No message
+        return;    
+    if(('0' != USART1_RX_buf[1]) && ('1' != USART1_RX_buf[1]))//non-phone message
+    {
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        return;
+    }
+    if((USART1_RX_STA & (uint16_t)(1<<15)) == 0x8000)//Get phone message
+    {
+        if (0 != (USART1_RX_STA & 0X0001))//invaild cmd
+        {
+            USART1_SendWord("Invaild message...");
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+            USART1_RX_STA = 0;
+            return;
+        }
+        uint8_t id;//get the id
+        uint8_t sta;//get the status
+        uint16_t i = 0;
+        while (i < (USART1_RX_STA & 0x7fff))
+        {
+            id = USART1_RX_buf[i];
+            sta = USART1_RX_buf[i+1];
+            id -= 48;//ascii code offset compasation
+            ctrl_string[id+1] = sta;
+            i += 2;
+        }
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        AT_Send("+++a");
+        AT_Send("AT+DISCONN\r\n");
+        AT_Send("AT+ENTM\r\n");
+        delay_ms_1(100);
+        MESH_cmd(ENABLE);
+        BLE_status_it();
+    }
+    
+#endif
 }
 /*--------------------------- END --------------------------*/

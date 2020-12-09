@@ -17,7 +17,9 @@ Date     : 2020-11-23
 
 /*----------- Global Definitions and Declarations ----------*/
 extern volatile uint8_t BLE_STA_flag;//BLE state flag 0:MESH, 1:NON-MESH
-
+#if (RELAY_DEV == DEVICE_ID)
+extern volatile uint8_t ctrl_string[];//used to control LED group
+#endif
 /*-------------------- Type Declarations -------------------*/
 #define DEBUG_STATUS 0 //record the status of function
 
@@ -102,8 +104,8 @@ Time                : 2020-12-04
 *************************************************************/
 void BLE_status_run(void);
 /*************************************************************
-Function Name       : key_led_run
-Function Description: use key to control led
+Function Name       : user_app_run
+Function Description: use key/phone to control led
 Param_in            : 
 Param_out           : 
 Return Type         : 
@@ -111,7 +113,8 @@ Note                :
 Author              : Yan
 Time                : 2020-11-25
 *************************************************************/
-void key_led_run(void);
+void user_app_run(void);
+
 /*------------------- Function Implement -------------------*/
 
 #endif

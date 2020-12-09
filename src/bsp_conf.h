@@ -18,7 +18,6 @@ Date     : 2020-11-20
 /*----------- Global Definitions and Declarations ----------*/
 //USART1相关宏定义
 #define USART1_RX_MAX_LEN      60  //最大接收缓存字节
-#define USART1_TX_MAX_LEN      60  //最大发送缓存字节
 #define USART1_STA_MAX_LEN     60  //最大状态量缓存字节
 
 extern volatile uint8_t key_flag;   //key state flag
@@ -26,7 +25,6 @@ extern volatile uint8_t exti4_sta_flag;  //used to know which IO(PC4/PB4) trigge
 extern volatile uint32_t beep_play_time; //record the beep play time
 extern volatile uint16_t USART1_RX_STA;  //record the receive data
 extern uint8_t USART1_RX_buf[USART1_RX_MAX_LEN];//USART1 receive buffer
-extern uint8_t USART1_TX_buf[USART1_TX_MAX_LEN];//USART1 transmitts buffer
 extern uint8_t USART1_STA_buf[USART1_STA_MAX_LEN];//USART1 state buffer
 /*-------------------- Type Declarations -------------------*/
 
@@ -246,7 +244,19 @@ Author              : Yan
 Time                : 2020-11-30
 *************************************************************/
 void MESH_cmd(FunctionalState NewState);
-
+#if (RELAY_DEV == DEVICE_ID)
+/*************************************************************
+Function Name       : bsp_phone_recevier
+Function Description: used in the relay device
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-08
+*************************************************************/
+void bsp_phone_recevier(void);
+#endif
 //模拟串口打印
 #if (SIM_UART_PRINTF_EN)
 extern void sim_uart_printf(uint8_t data);

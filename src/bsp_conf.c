@@ -19,7 +19,6 @@ Date     : 2020-11-20
 /*-------------------- Type Declarations -------------------*/
 const uint8_t beep_period_buf[E_BEEP_PERIOD_END] = {1, 2, 5, 6, 12, 63, 124, 250};
 uint8_t USART1_RX_buf[USART1_RX_MAX_LEN];//USART1 receive buffer
-uint8_t USART1_TX_buf[USART1_TX_MAX_LEN];//USART1 transmitts buffer
 uint8_t USART1_STA_buf[USART1_STA_MAX_LEN];//USART1 state buffer
 /*------------------ Variable Declarations -----------------*/
 volatile uint8_t key_flag = 0;       //key state flag
@@ -139,9 +138,11 @@ void bsp_key_detec(void)
     }
     if (30 > key_flag)//short press
     {
-        USART1_SendWord("::1111111111");
-        // LEDG_H();
-        // LEDR_H();
+#if(RELAY_DEV == DEVICE_ID)
+        uint8_t *temp_string;//intermediate variables
+        temp_string = (uint8_t *)ctrl_string;
+        USART1_SendWord(temp_string);
+#endif
     }
     if (30 <= key_flag)//long press
     {
@@ -151,8 +152,6 @@ void bsp_key_detec(void)
             MESH_cmd(DISABLE);
         BLE_status_it();
     }
-    
-    
     key_flag = 0;
 }
 /*************************************************************
@@ -533,6 +532,9 @@ void USART1_IRQHandler(void)
                 if(0 == USART1_RX_STA)
                     TIM3_Cmd(ENABLE);
                 USART1_RX_buf[USART1_RX_STA++] = receive_data;
+                // if(RELAY_DEV == DEVICE_ID)
+                //     USART1_RELAY_buf[USART1_RX_STA++] = receive_data;
+                
             }
             else
                 USART1_RX_STA |= (uint16_t) 1<<15;//enforce finish receive 
@@ -693,7 +695,30 @@ void MESH_cmd(FunctionalState NewState)
     }
 
 }
+#if (RELAY_DEV == DEVICE_ID)
+/*************************************************************
+Function Name       : bsp_phone_recevier
+Function Description: used in the relay device
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : receive and process the messsage from phone
+Author              : Yan
+Time                : 2020-12-08
+*************************************************************/
+void bsp_phone_recevier(void)
+{
+    /**
+     * @brief: Receive two bits of data at a time
+     * @param bit [1]: set the status of the device(0, 1)
+     * @param bit [0]: selected device ID(2, 3, 4, 5...)
+     * @note eg. (30) means N3 with low level, (41) means N4 with high level
+     */
+    MESH_cmd(DISABLE);//make sure D1 works on the non-mesh mode
 
+    
+}
+#endif
 /*************************************************************
 Function Name       : sim_uart_printf
 Function Description: Ä£Äâ´®¿Ú´òÓ¡

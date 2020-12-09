@@ -59,6 +59,20 @@ int main(void)
        key_led_run();
     }
 #endif
+#if (2 == CODE_VERSION)//Version 2     
+    KEY_ENABLE();
+    // LINK_ENABLE();
+    delay_ms_1(100);
+    __enable_interrupt();
+    // AT_Send("+++a");
+    // // AT_Send("AT+MODE?\r\n");
+    // AT_Send("AT+ENTM\r\n");
+    while(1)
+    {
+        user_app_run(); 
+        BLE_status_run();
+    }
+#endif
 }
 
 #ifdef USE_FULL_ASSERT

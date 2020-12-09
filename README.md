@@ -28,4 +28,12 @@ Markdown here, and I will try to fix it.
     // ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_2); //led second
 ```
 The problem is fixed. The reason is that the button pin(PB4) and the link pin(PC4) are all using the same EXTI4, which is the program never considered. So I add a function used to detect which pin is really triggered.<br>
+***
+## VERSION
+* v1.0
 
+Ten devices can be meshed<br>
+
+**Long press** the button to switch *mesh/non-mesh* mode<br>
+
+**Short press** the button to send instructions<br>
