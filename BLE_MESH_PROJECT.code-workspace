@@ -6,7 +6,8 @@
     ],
     "settings": {
         "files.associations": {
-            ".eideignore": "ignore"
+            ".eideignore": "ignore",
+            "iostream": "cpp"
         },
         "C_Cpp.default.intelliSenseMode": "msvc-x86",
         "files.autoGuessEncoding": true,

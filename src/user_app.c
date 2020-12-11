@@ -21,7 +21,7 @@ Date     : 2020-11-23
 /*------------------ Variable Declarations -----------------*/
 volatile uint8_t BLE_STA_flag = 1;//BLE state flag 0:MESH, 1:NON-MESH
 #if (1 == DEVICE_ID)
-volatile uint8_t ctrl_string[] = "::0000000000";//used to control LED group
+volatile uint8_t ctrl_string[] = "::000000000";//used to control LED group
 #endif
 /*------------------- Function Prototype -------------------*/
 

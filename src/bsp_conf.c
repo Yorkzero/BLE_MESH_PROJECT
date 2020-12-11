@@ -139,9 +139,7 @@ void bsp_key_detec(void)
     if (30 > key_flag)//short press
     {
 #if(RELAY_DEV == DEVICE_ID)
-        uint8_t *temp_string;//intermediate variables
-        temp_string = (uint8_t *)ctrl_string;
-        USART1_SendWord(temp_string);
+        node_info_query();  
 #endif
     }
     if (30 <= key_flag)//long press
@@ -570,6 +568,9 @@ Return Type         :
 Note                : This parameter can be ENABLE or DISABLE
 Author              : Yan
 Time                : 2020-11-30
+--------------------------------------------------------------
+log                 : 2020-12-10
+                      Add the data packing time(20ms) on non-mesh mode
 *************************************************************/
 void MESH_cmd(FunctionalState NewState)
 {
@@ -677,6 +678,7 @@ void MESH_cmd(FunctionalState NewState)
             AT_Send("AT+NAME=D10\r\n");//DEVICE 10 out MESH
 #endif
             AT_Send("AT+MODE=S\r\n");//mode:Slave
+            AT_Send("AT+UARTTM=2\r\n");//data packing time: 20ms
             while(AT_Send("AT+ENTM\r\n"))//Exit AT Mode
             {
                 if ((i++) >= 5)
@@ -695,30 +697,91 @@ void MESH_cmd(FunctionalState NewState)
     }
 
 }
-#if (RELAY_DEV == DEVICE_ID)
 /*************************************************************
-Function Name       : bsp_phone_recevier
-Function Description: used in the relay device
+Function Name       : data_packet_process
+Function Description: used to process and send long data(>20byte)
+Param_in            : uint8_t *longdata
+Param_out           : 
+Return Type         : 
+Note                : based on WH-BLE103
+Author              : Yan
+Time                : 2020-12-10
+*************************************************************/
+void data_packet_process(uint8_t *longdata)
+{
+    uint16_t i = strlen(longdata);
+    uint8_t *Data;
+    Data = longdata;
+    if (i <= PACKET_MAX_LEN)//if user sends the short data(<20byte)
+    {
+        USART1_SendWord(longdata);
+        return;
+    }
+    while (i > PACKET_MAX_LEN)//process the packet of long data
+    {
+        uint8_t temp = 0;//record the num of bytes
+        for (temp = 0; temp < PACKET_MAX_LEN; temp++)
+        {
+            USART_SendData8(USART1, *Data++);
+            while (!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
+        }
+        i -= PACKET_MAX_LEN;
+        delay_ms_1(25);
+    }
+    while(*Data)//send the remained data
+    {
+        USART_SendData8(USART1, *Data++);
+        while (!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
+    }
+}
+/*************************************************************
+Function Name       : node_info_query
+Function Description: inquire the information of node
 Param_in            : 
 Param_out           : 
 Return Type         : 
-Note                : receive and process the messsage from phone
+Note                : 
 Author              : Yan
-Time                : 2020-12-08
+Time                : 2020-12-10
 *************************************************************/
-void bsp_phone_recevier(void)
+void node_info_query(void)
 {
-    /**
-     * @brief: Receive two bits of data at a time
-     * @param bit [1]: set the status of the device(0, 1)
-     * @param bit [0]: selected device ID(2, 3, 4, 5...)
-     * @note eg. (30) means N3 with low level, (41) means N4 with high level
-     */
-    MESH_cmd(DISABLE);//make sure D1 works on the non-mesh mode
-
+    uint8_t *temp_string;//intermediate variables
+    // uint8_t *node_info_string = "N2: 0\r\nN3: 0\r\nN4: 0\r\nN5: 0\r\nN6: 0\r\nN7: 0\r\nN8: 0\r\nN9: 0\r\n";//record the status of node
+    uint8_t k = 4, j = 0;
+    temp_string = (uint8_t *)ctrl_string;
+    temp_string += 3;
+    uint8_t i =strlen(temp_string);
+    i *= 7;
+    uint8_t *node_info_string = (uint8_t *)malloc(i+1);//record the status of node
+    memset(node_info_string, 0, sizeof(node_info_string));
+    for (i = 0; i < (strlen(temp_string) * 7); i+=7)
+    {
+        node_info_string[i] = 'N';
+        node_info_string[i+1] = '2' + j;
+        node_info_string[i+2] = ':';
+        node_info_string[i+3] = ' ';
+        node_info_string[i+4] = '0';
+        node_info_string[i+5] = '\r';
+        node_info_string[i+6] = '\n';
+        j++;
+    }
     
+    node_info_string+=4;
+    *node_info_string = *temp_string;
+    temp_string++;   
+    while (*temp_string)
+    {
+        node_info_string+=7;
+        *node_info_string = *temp_string;
+        k+=7;
+        temp_string++;
+    }
+    node_info_string-=k;
+    data_packet_process(node_info_string);
+    free(node_info_string);//release the rom
+    node_info_string = NULL;
 }
-#endif
 /*************************************************************
 Function Name       : sim_uart_printf
 Function Description: Ä£Äâ´®¿Ú´òÓ¡

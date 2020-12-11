@@ -244,19 +244,28 @@ Author              : Yan
 Time                : 2020-11-30
 *************************************************************/
 void MESH_cmd(FunctionalState NewState);
-#if (RELAY_DEV == DEVICE_ID)
 /*************************************************************
-Function Name       : bsp_phone_recevier
-Function Description: used in the relay device
+Function Name       : data_packet_process
+Function Description: used to process and send long data(>20byte)
+Param_in            : uint8_t *longdata
+Param_out           : 
+Return Type         : 
+Note                : based on WH-BLE103
+Author              : Yan
+Time                : 2020-12-10
+*************************************************************/
+void data_packet_process(uint8_t *longdata);
+/*************************************************************
+Function Name       : node_info_query
+Function Description: inquire the information of node
 Param_in            : 
 Param_out           : 
 Return Type         : 
 Note                : 
 Author              : Yan
-Time                : 2020-12-08
+Time                : 2020-12-10
 *************************************************************/
-void bsp_phone_recevier(void);
-#endif
+void node_info_query(void);
 //Ä£Äâ´®¿Ú´òÓ¡
 #if (SIM_UART_PRINTF_EN)
 extern void sim_uart_printf(uint8_t data);
