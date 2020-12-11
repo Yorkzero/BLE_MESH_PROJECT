@@ -37,3 +37,9 @@ Ten devices can be meshed<br>
 **Long press** the button to switch *mesh/non-mesh* mode<br>
 
 **Short press** the button to send instructions<br>
+
+* v2.0
+
+The relay node can control all of the nodes in mesh through phone<br>
+
+By **short press**, The relay node send the node message to the phone<br>
