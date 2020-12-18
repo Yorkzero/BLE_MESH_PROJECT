@@ -20,6 +20,7 @@ Date     : 2020-11-23
 
 /*------------------ Variable Declarations -----------------*/
 volatile uint8_t BLE_STA_flag = 1;//BLE state flag 0:MESH, 1:NON-MESH
+volatile uint8_t LOCK_STA_flag = 1;//LOCK state flag 0:LOCKED, 1:UNLOCKED
 #if (1 == DEVICE_ID)
 volatile uint8_t ctrl_string[] = "::000000000";//used to control LED group
 #endif
@@ -339,63 +340,63 @@ void user_app_run(void)
     {
 #if (1 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[0])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[0])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (2 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[1])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[1])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (3 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[2])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[2])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (4 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[3])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[3])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (5 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[4])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[4])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (6 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[5])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[5])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (7 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[6])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[6])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (8 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[7])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[7])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (9 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[8])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[8])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
 #if (10 == DEVICE_ID)            
         if ('1' == USART1_RX_buf[9])
-            LEDG_H();
+            ble_lock(DISABLE);
         if ('0' == USART1_RX_buf[9])
-            LEDG_L();
+            ble_lock(ENABLE);
 #endif
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
@@ -456,5 +457,34 @@ void user_app_run(void)
     }
     
 #endif
+}
+/*************************************************************
+Function Name       : ble_lock
+Function Description: used to send lock or unlock cmd
+Param_in            : ENABLE or DISABLE
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-18
+*************************************************************/
+void ble_lock(FunctionalState Newstate)
+{
+    assert_param(IS_FUNCTIONAL_STATE(Newstate));
+    if((ENABLE == Newstate) && (1 == LOCK_STA_flag))//lock the door
+    {
+        MOTO_FW();
+        delay_ms_1(350);
+        MOTO_WT();
+        LOCK_STA_flag = 0;//change the flag
+    }
+    else if ((DISABLE == Newstate) && (0 == LOCK_STA_flag))//open the door
+    {
+        MOTO_BW();
+        delay_ms_1(350);
+        MOTO_WT();
+        LOCK_STA_flag = 1;//change the flag
+    }
+    
 }
 /*--------------------------- END --------------------------*/

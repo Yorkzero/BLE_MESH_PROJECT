@@ -68,6 +68,14 @@ Date     : 2020-11-20
 #define LINK_PORT       GPIOC       //BLE LINK STA
 #define LINK_PIN        GPIO_Pin_4  //BLE LINK STA
 
+#define MOTOA_PORT      GPIOB
+#define MOTOA_PIN       GPIO_Pin_2
+#define MOTOB_PORT      GPIOB
+#define MOTOB_PIN       GPIO_Pin_1
+#define MOTO_FW()       {MOTOA_PORT->ODR |= MOTOA_PIN; MOTOB_PORT->ODR &= ~MOTOB_PIN;}//motor forwards
+#define MOTO_BW()       {MOTOB_PORT->ODR |= MOTOB_PIN; MOTOA_PORT->ODR &= ~MOTOA_PIN;}//motor backforwards
+#define MOTO_WT()       {MOTOB_PORT->ODR |= MOTOB_PIN; MOTOA_PORT->ODR |= MOTOA_PIN;}//motor waits
+#define MOTO_BR()       {MOTOB_PORT->ODR &= ~MOTOB_PIN; MOTOA_PORT->ODR &= ~MOTOA_PIN;}//motor brakes
 //Unused GPIO Definition
 #define PA_UNUSED_PIN   (GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6)
 #define PB_UNUSED_PIN   (GPIO_Pin_3 | GPIO_Pin_5 | GPIO_Pin_7)
@@ -121,7 +129,7 @@ enum
 #define SIM_UART_PRINTF_EN 0 //模拟打印开关
 #define CODE_VERSION 2       //用于版本号控制
 #define RELAY_DEV 1
-#define DEVICE_ID RELAY_DEV          //用于匹配目前的设备ID(ID = 0, 1, 2...)其中D1负责桥接MESH内外设备
+#define DEVICE_ID 4          //用于匹配目前的设备ID(ID = 0, 1, 2...)其中D1负责桥接MESH内外设备
 #define PACKET_MAX_LEN 20   //适配WH-BLE103的分包大小(20byte)
 /*------------------- Function Prototype -------------------*/
 

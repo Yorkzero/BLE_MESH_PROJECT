@@ -17,6 +17,7 @@ Date     : 2020-11-23
 
 /*----------- Global Definitions and Declarations ----------*/
 extern volatile uint8_t BLE_STA_flag;//BLE state flag 0:MESH, 1:NON-MESH
+extern volatile uint8_t LOCK_STA_flag;//LOCK state flag 0:LOCKED, 1:UNLOCKED
 #if (RELAY_DEV == DEVICE_ID)
 extern volatile uint8_t ctrl_string[];//used to control LED group
 #endif
@@ -114,6 +115,17 @@ Author              : Yan
 Time                : 2020-11-25
 *************************************************************/
 void user_app_run(void);
+/*************************************************************
+Function Name       : ble_lock
+Function Description: used to send lock or unlock cmd
+Param_in            : ENABLE or DISABLE
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-18
+*************************************************************/
+void ble_lock(FunctionalState Newstate);
 
 /*------------------- Function Implement -------------------*/
 

@@ -266,6 +266,17 @@ Author              : Yan
 Time                : 2020-12-10
 *************************************************************/
 void node_info_query(void);
+/*************************************************************
+Function Name       : motor_run
+Function Description: used to control the motor
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-17
+*************************************************************/
+void motor_run(void);
 //Ä£Äâ´®¿Ú´òÓ¡
 #if (SIM_UART_PRINTF_EN)
 extern void sim_uart_printf(uint8_t data);

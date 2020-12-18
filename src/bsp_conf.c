@@ -56,6 +56,8 @@ void bsp_gpio_init(void)
     GPIO_Init(BEEP_PORT, BEEP_PIN, GPIO_Mode_Out_PP_Low_Slow);        //beep init
     GPIO_Init(UART_RX_PORT, UART_RX_PIN, GPIO_Mode_In_PU_No_IT);      //UART receive init
     GPIO_Init(UART_TX_PORT, UART_TX_PIN, GPIO_Mode_Out_PP_High_Fast); //UART transmitt init
+    GPIO_Init(MOTOA_PORT, MOTOA_PIN, GPIO_Mode_Out_PP_Low_Slow);      //motor A init
+    GPIO_Init(MOTOB_PORT, MOTOB_PIN, GPIO_Mode_Out_PP_Low_Slow);      //motor B init
     //Initialization of EXIT
     // EXTI_SetPortSensitivity(KEY_EXTI_PORT, EXTI_Trigger_Falling);       //key trigger falling
     EXTI_SetPinSensitivity(KEY_EXTI_PIN, EXTI_Trigger_Falling); //key trigger falling
@@ -139,8 +141,15 @@ void bsp_key_detec(void)
     if (30 > key_flag)//short press
     {
 #if(RELAY_DEV == DEVICE_ID)
-        node_info_query();  
+        node_info_query();
+        // AT_Send("+++a");
+        // AT_Send("AT+CIVER?\r\n");
+        // AT_Send("AT+ENTM\r\n");
+        // motor_run();
+#else
+    ble_lock(ENABLE);
 #endif
+
     }
     if (30 <= key_flag)//long press
     {
@@ -500,7 +509,6 @@ void bsp_uart_init(void)
     USART_Init(USART1, (uint32_t)57600, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, (USART_Mode_Tx | USART_Mode_Rx));
 
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-    // USART_ITConfig(USART1, USART_IT_OR, ENABLE);
     ITC_SetSoftwarePriority(USART1_RX_IRQn, ITC_PriorityLevel_2);//priority 2
     USART_Cmd(USART1, ENABLE);
     USART1_RX_STA = 0;
@@ -777,10 +785,31 @@ void node_info_query(void)
         k+=7;
         temp_string++;
     }
-    node_info_string-=k;
+    node_info_string -= k;
     data_packet_process(node_info_string);
     free(node_info_string);//release the rom
     node_info_string = NULL;
+}
+/*************************************************************
+Function Name       : motor_run
+Function Description: used to control the motor
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-17
+*************************************************************/
+void motor_run(void)
+{
+    
+    MOTO_FW();
+    delay_ms_1(400);
+    MOTO_WT();
+    delay_ms_1(200);
+    MOTO_BW();
+    delay_ms_1(400);
+    MOTO_WT();
 }
 /*************************************************************
 Function Name       : sim_uart_printf
