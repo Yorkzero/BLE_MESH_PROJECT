@@ -141,7 +141,7 @@ void bsp_key_detec(void)
     if (30 > key_flag)//short press
     {
 #if(RELAY_DEV == DEVICE_ID)
-        node_info_query();
+        // node_info_query();
         // AT_Send("+++a");
         // AT_Send("AT+CIVER?\r\n");
         // AT_Send("AT+ENTM\r\n");
@@ -506,13 +506,18 @@ void bsp_uart_init(void)
     * @param PR: no parity, 
     * @param MODE: RX/TX mode 
     */
-    USART_Init(USART1, (uint32_t)57600, USART_WordLength_8b, USART_StopBits_1, USART_Parity_No, (USART_Mode_Tx | USART_Mode_Rx));
+    USART_Init(USART1, (uint32_t)57600, 
+                        USART_WordLength_8b, 
+                        USART_StopBits_1, 
+                        USART_Parity_No, 
+                        (USART_Mode_Tx | USART_Mode_Rx));
 
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
     ITC_SetSoftwarePriority(USART1_RX_IRQn, ITC_PriorityLevel_2);//priority 2
     USART_Cmd(USART1, ENABLE);
     USART1_RX_STA = 0;
     bsp_tim3_init(1250);//Enter interrupt after 10ms
+    // bsp_tim3_init(12500);//Enter interrupt after 100ms
 }
 /*************************************************************
 Function Name       : USART1_IRQHandler
@@ -735,6 +740,7 @@ void data_packet_process(uint8_t *longdata)
         }
         i -= PACKET_MAX_LEN;
         delay_ms_1(25);
+        
     }
     while(*Data)//send the remained data
     {
@@ -791,25 +797,78 @@ void node_info_query(void)
     node_info_string = NULL;
 }
 /*************************************************************
-Function Name       : motor_run
-Function Description: used to control the motor
-Param_in            : 
+Function Name       : mesh_data_transmitts
+Function Description: used to transmitt mesh data
+Param_in            : uint8_t *mesh_data
 Param_out           : 
 Return Type         : 
 Note                : 
 Author              : Yan
-Time                : 2020-12-17
+Time                : 2020-12-21
 *************************************************************/
-void motor_run(void)
+void mesh_data_transmitts(uint8_t *mesh_data)
 {
-    
-    MOTO_FW();
-    delay_ms_1(400);
-    MOTO_WT();
-    delay_ms_1(200);
-    MOTO_BW();
-    delay_ms_1(400);
-    MOTO_WT();
+    uint16_t i = strlen(mesh_data);
+    uint8_t *Data;
+    Data = mesh_data;
+    if (i <= PACKET_MAX_LEN)//if user sends the short data(<20byte)
+    {
+        USART1_SendWord(mesh_data);
+        while(!(USART1_RX_STA & 0x8000));
+        if('t' == USART1_RX_buf[(USART1_RX_STA & 0x7FFF) - 3])
+        {
+            USART1_RX_STA = 0;
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        }
+        while(!(USART1_RX_STA & 0x8000));
+        if('p' == USART1_RX_buf[(USART1_RX_STA & 0x7FFF) - 3])
+        {
+            USART1_RX_STA = 0;
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        }
+        return;
+    }
+    while (i > PACKET_MAX_LEN)//process the packet of long data
+    {
+        uint8_t temp = 0;//record the num of bytes
+        for (temp = 0; temp < PACKET_MAX_LEN; temp++)
+        {
+            USART_SendData8(USART1, *Data++);
+            while (!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
+        }
+        while(!(USART1_RX_STA & 0x8000));
+        if('t' == USART1_RX_buf[(USART1_RX_STA & 0x7FFF) - 3])
+        {
+            USART1_RX_STA = 0;
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        }
+        while(!(USART1_RX_STA & 0x8000));
+        if('p' == USART1_RX_buf[(USART1_RX_STA & 0x7FFF) - 3])
+        {
+            USART1_RX_STA = 0;
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        }
+        i -= PACKET_MAX_LEN;
+        delay_ms_1(25);
+        
+    }
+    while(*Data)//send the remained data
+    {
+        USART_SendData8(USART1, *Data++);
+        while (!USART_GetFlagStatus(USART1, USART_FLAG_TXE));
+    }
+    while(!(USART1_RX_STA & 0x8000));
+    if('t' == USART1_RX_buf[(USART1_RX_STA & 0x7FFF) - 3])
+    {
+        USART1_RX_STA = 0;
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+    }
+    while(!(USART1_RX_STA & 0x8000));
+    if('p' == USART1_RX_buf[(USART1_RX_STA & 0x7FFF) - 3])
+    {
+        USART1_RX_STA = 0;
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+    }
 }
 /*************************************************************
 Function Name       : sim_uart_printf

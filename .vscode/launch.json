@@ -9,6 +9,15 @@
             "interface": "stlink3",
             "cpu": "STM8L151K4",
             "executable": ".\\out\\Debug\\BLE_MESH_PROJECT.out"
+        },
+        {
+            "type": "stm8-debug",
+            "request": "launch",
+            "name": "iar-stm8",
+            "serverType": "st7",
+            "interface": "stlink3",
+            "cpu": "<MCU-NAME>",
+            "executable": ".\\out\\Debug\\BLE_MESH_PROJECT.out"
         }
     ]
 }

@@ -22,7 +22,7 @@ Date     : 2020-11-23
 volatile uint8_t BLE_STA_flag = 1;//BLE state flag 0:MESH, 1:NON-MESH
 volatile uint8_t LOCK_STA_flag = 1;//LOCK state flag 0:LOCKED, 1:UNLOCKED
 #if (1 == DEVICE_ID)
-volatile uint8_t ctrl_string[] = "::000000000";//used to control LED group
+volatile uint8_t ctrl_string[] = "::000";//used to control LED group
 #endif
 /*------------------- Function Prototype -------------------*/
 
@@ -330,77 +330,52 @@ void user_app_run(void)
 #if (RELAY_DEV != DEVICE_ID)
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 0)//No message
         return;    
-    if(('0' != USART1_RX_buf[0]) && ('1' != USART1_RX_buf[0]))//non-key message
+    if(('0' != USART1_RX_buf[2]) && ('1' != USART1_RX_buf[2]))//non-key message
     {
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        return;
+    }
+    if('f' == USART1_RX_buf[0])
+    {
+        ble_lock(ENABLE);
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        return;
+    }
+    if('d' == USART1_RX_buf[0])
+    {
+        ble_lock(DISABLE);
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
         return;
     }
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 32768)//Get key message
     {
-#if (1 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[0])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[0])
-            ble_lock(ENABLE);
-#endif
-#if (2 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[1])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[1])
-            ble_lock(ENABLE);
-#endif
-#if (3 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[2])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[2])
-            ble_lock(ENABLE);
-#endif
-#if (4 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[3])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[3])
-            ble_lock(ENABLE);
-#endif
-#if (5 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[4])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[4])
-            ble_lock(ENABLE);
-#endif
-#if (6 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[5])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[5])
-            ble_lock(ENABLE);
-#endif
-#if (7 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[6])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[6])
-            ble_lock(ENABLE);
-#endif
-#if (8 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[7])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[7])
-            ble_lock(ENABLE);
-#endif
-#if (9 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[8])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[8])
-            ble_lock(ENABLE);
-#endif
-#if (10 == DEVICE_ID)            
-        if ('1' == USART1_RX_buf[9])
-            ble_lock(DISABLE);
-        if ('0' == USART1_RX_buf[9])
-            ble_lock(ENABLE);
-#endif
-        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
-        USART1_RX_STA = 0;
-        
+        uint8_t id, id_lb, id_hb;
+        id_hb = USART1_RX_buf[0];
+        id_lb = USART1_RX_buf[1];
+        id_hb -= 48;
+        id_lb -= 48;
+        id = id_hb * 10 +id_lb;
+        if(DEVICE_ID == id)
+        {
+            if ('0' == USART1_RX_buf[2])
+            {
+                ble_lock(ENABLE);
+            }
+            if ('1' == USART1_RX_buf[2])
+            {
+                ble_lock(DISABLE);
+            }
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+            USART1_RX_STA = 0;    
+        }
+        else
+        {
+            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+            USART1_RX_STA = 0;    
+        }
     }
 #endif
 #if (RELAY_DEV == DEVICE_ID)
@@ -413,14 +388,42 @@ void user_app_run(void)
         //process
         uint8_t *temp_string;//intermediate variables
         temp_string = (uint8_t *)ctrl_string;
-        USART1_SendWord(temp_string);
-        delay_ms_1(500);
+        mesh_data_transmitts(temp_string);
+        
         MESH_cmd(DISABLE);
         BLE_status_it();
     }
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 0)//No message
-        return;    
-    if(('0' != USART1_RX_buf[1]) && ('1' != USART1_RX_buf[1]))//non-phone message
+        return;
+    if(('f' == USART1_RX_buf[0]) && ('f' == USART1_RX_buf[1]) && ('f' == USART1_RX_buf[2]))//lock all device
+    {
+        ctrl_string[2] = 'f';
+        //clear buf
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        AT_Send("+++a");
+        AT_Send("AT+DISCONN\r\n");
+        AT_Send("AT+ENTM\r\n");
+        delay_ms_1(100);
+        MESH_cmd(ENABLE);
+        BLE_status_it();
+        return;
+    }
+    if(('d' == USART1_RX_buf[0]) && ('d' == USART1_RX_buf[1]) && ('d' == USART1_RX_buf[2]))//unlock all device
+    {
+        ctrl_string[2] = 'd';
+        //clear buf
+        memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+        USART1_RX_STA = 0;
+        AT_Send("+++a");
+        AT_Send("AT+DISCONN\r\n");
+        AT_Send("AT+ENTM\r\n");
+        delay_ms_1(100);
+        MESH_cmd(ENABLE);
+        BLE_status_it();
+        return;
+    }    
+    if(('0' != USART1_RX_buf[2]) && ('1' != USART1_RX_buf[2]))//non-phone message
     {
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
@@ -428,24 +431,10 @@ void user_app_run(void)
     }
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 0x8000)//Get phone message
     {
-        if (0 != (USART1_RX_STA & 0X0001))//invaild cmd
-        {
-            USART1_SendWord("Invaild message...");
-            memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
-            USART1_RX_STA = 0;
-            return;
-        }
-        uint8_t id;//get the id
-        uint8_t sta;//get the status
-        uint16_t i = 0;
-        while (i < (USART1_RX_STA & 0x7fff))
-        {
-            id = USART1_RX_buf[i];
-            sta = USART1_RX_buf[i+1];
-            id -= 48;//ascii code offset compasation
-            ctrl_string[id+1] = sta;
-            i += 2;
-        }
+        ctrl_string[2] = USART1_RX_buf[0];//id_hb
+        ctrl_string[3] = USART1_RX_buf[1];//id_lb
+        ctrl_string[4] = USART1_RX_buf[2];//id_sta
+
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
         AT_Send("+++a");
@@ -455,6 +444,35 @@ void user_app_run(void)
         MESH_cmd(ENABLE);
         BLE_status_it();
     }
+    // if((USART1_RX_STA & (uint16_t)(1<<15)) == 0x8000)//Get phone message
+    // {
+    //     if (0 != (USART1_RX_STA & 0X0001))//invaild cmd
+    //     {
+    //         USART1_SendWord("Invaild message...");
+    //         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+    //         USART1_RX_STA = 0;
+    //         return;
+    //     }
+    //     uint8_t id;//get the id
+    //     uint8_t sta;//get the status
+    //     uint16_t i = 0;
+    //     while (i < (USART1_RX_STA & 0x7fff))
+    //     {
+    //         id = USART1_RX_buf[i];
+    //         sta = USART1_RX_buf[i+1];
+    //         id -= 48;//ascii code offset compasation
+    //         ctrl_string[id+1] = sta;
+    //         i += 2;
+    //     }
+    //     memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+    //     USART1_RX_STA = 0;
+    //     AT_Send("+++a");
+    //     AT_Send("AT+DISCONN\r\n");
+    //     AT_Send("AT+ENTM\r\n");
+    //     delay_ms_1(100);
+    //     MESH_cmd(ENABLE);
+    //     BLE_status_it();
+    // }
     
 #endif
 }
@@ -474,14 +492,14 @@ void ble_lock(FunctionalState Newstate)
     if((ENABLE == Newstate) && (1 == LOCK_STA_flag))//lock the door
     {
         MOTO_FW();
-        delay_ms_1(350);
+        delay_ms_1(250);
         MOTO_WT();
         LOCK_STA_flag = 0;//change the flag
     }
     else if ((DISABLE == Newstate) && (0 == LOCK_STA_flag))//open the door
     {
         MOTO_BW();
-        delay_ms_1(350);
+        delay_ms_1(250);
         MOTO_WT();
         LOCK_STA_flag = 1;//change the flag
     }

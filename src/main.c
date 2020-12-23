@@ -64,6 +64,18 @@ int main(void)
     // LINK_ENABLE();
     delay_ms_1(100);
     __enable_interrupt();
+    delay_ms_1(500);
+    //init
+    memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
+    USART1_RX_STA = 0;    
+#if (RELAY_DEV == DEVICE_ID)
+    MESH_cmd(DISABLE);
+    BLE_status_it();
+#else
+    MESH_cmd(ENABLE);
+    BLE_status_it();
+#endif
+    delay_ms_1(500);
     // AT_Send("+++a");
     // // AT_Send("AT+MODE?\r\n");
     // AT_Send("AT+ENTM\r\n");

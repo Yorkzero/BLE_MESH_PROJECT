@@ -17,8 +17,8 @@ Date     : 2020-11-20
 
 /*----------- Global Definitions and Declarations ----------*/
 //USART1相关宏定义
-#define USART1_RX_MAX_LEN      60  //最大接收缓存字节
-#define USART1_STA_MAX_LEN     60  //最大状态量缓存字节
+#define USART1_RX_MAX_LEN      100  //最大接收缓存字节
+#define USART1_STA_MAX_LEN     100  //最大状态量缓存字节
 
 extern volatile uint8_t key_flag;   //key state flag
 extern volatile uint8_t exti4_sta_flag;  //used to know which IO(PC4/PB4) triggers the IT. sta: 0(PC4), 1(PB4)
@@ -267,16 +267,16 @@ Time                : 2020-12-10
 *************************************************************/
 void node_info_query(void);
 /*************************************************************
-Function Name       : motor_run
-Function Description: used to control the motor
-Param_in            : 
+Function Name       : mesh_data_transmitts
+Function Description: used to transmitt mesh data
+Param_in            : uint8_t *mesh_data
 Param_out           : 
 Return Type         : 
 Note                : 
 Author              : Yan
-Time                : 2020-12-17
+Time                : 2020-12-21
 *************************************************************/
-void motor_run(void);
+void mesh_data_transmitts(uint8_t *mesh_data);
 //模拟串口打印
 #if (SIM_UART_PRINTF_EN)
 extern void sim_uart_printf(uint8_t data);
