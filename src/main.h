@@ -129,7 +129,7 @@ enum
 #define SIM_UART_PRINTF_EN 0 //模拟打印开关
 #define CODE_VERSION 2       //用于版本号控制
 #define RELAY_DEV 1
-#define DEVICE_ID RELAY_DEV          //用于匹配目前的设备ID(ID = 0, 1, 2...)其中D1负责桥接MESH内外设备
+#define DEVICE_ID 8          //用于匹配目前的设备ID(ID = 0, 1, 2...)其中D1负责桥接MESH内外设备
 #define PACKET_MAX_LEN 20   //适配WH-BLE103的分包大小(20byte)
 /*------------------- Function Prototype -------------------*/
 

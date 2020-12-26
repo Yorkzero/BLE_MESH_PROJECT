@@ -61,9 +61,10 @@ void bsp_gpio_init(void)
     //Initialization of EXIT
     // EXTI_SetPortSensitivity(KEY_EXTI_PORT, EXTI_Trigger_Falling);       //key trigger falling
     EXTI_SetPinSensitivity(KEY_EXTI_PIN, EXTI_Trigger_Falling); //key trigger falling
-
+    EXTI_SetPinSensitivity(EXTI_Pin_2, EXTI_Trigger_Falling); //ble trigger falling
     //IT Priority
     ITC_SetSoftwarePriority(EXTI4_IRQn,ITC_PriorityLevel_1); //key 1
+    ITC_SetSoftwarePriority(EXTI2_IRQn,ITC_PriorityLevel_1); //key 1
     //Set unused pin mode: IN_PU_NO_IT
     GPIO_Init(GPIOA, PA_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
     GPIO_Init(GPIOB, PB_UNUSED_PIN, GPIO_Mode_In_PU_No_IT);
@@ -161,6 +162,7 @@ void bsp_key_detec(void)
     }
     key_flag = 0;
 }
+
 /*************************************************************
 Function Name       : link_sta_detec
 Function Description: ble Link state detection
@@ -173,17 +175,7 @@ Time                : 2020-11-23
 *************************************************************/
 void link_sta_detec(void)
 {
-    // if (BLE_STA_READ())//high level
-    // {
-    //     LEDG_L();
-    //     //LEDR_H();
-    // }
-    // if (!BLE_STA_READ())//low level
-    // {
-    //     LEDG_H();
-    //     //LEDR_L();
-    // }
-    LEDG_R();
+    
 }
 /*************************************************************
 Function Name       : EXTI4_Sta_detec
@@ -531,6 +523,7 @@ Time                : 2020-11-27
 *************************************************************/
 void USART1_IRQHandler(void)
 {
+    
     uint8_t receive_data;
     if(USART_GetITStatus(USART1,USART_IT_RXNE) != RESET)        //Check whether the specified UART1 interrupt occurs. 
     {
@@ -553,6 +546,30 @@ void USART1_IRQHandler(void)
 
         USART_ClearITPendingBit(USART1,USART_IT_RXNE);            //Clear UART1 pending flag
     }
+}
+/*************************************************************
+Function Name       : mode_IRQHandler
+Function Description: change exti mode to usart mode
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-26
+*************************************************************/
+void mode_IRQHandler(void)
+{
+    delay_ms_1(100);
+    GPIO_Init(UART_RX_PORT, UART_RX_PIN, GPIO_Mode_In_PU_No_IT);      //UART receive init
+    CLK_PeripheralClockConfig(CLK_Peripheral_USART1, ENABLE);
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, ENABLE);
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM3, ENABLE);
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM4,ENABLE);
+    
+    
+    USART_Cmd(USART1, ENABLE);
+    EXTI_ClearITPendingBit(EXTI_IT_Pin2);
+    SYS_STA_flag = 1;
 }
 /*************************************************************
 Function Name       : USART1_SendWord
@@ -689,6 +706,9 @@ void MESH_cmd(FunctionalState NewState)
 #endif
 #if (10 == DEVICE_ID)            
             AT_Send("AT+NAME=D10\r\n");//DEVICE 10 out MESH
+#endif
+#if (11 == DEVICE_ID)            
+            AT_Send("AT+NAME=D11\r\n");//DEVICE 11 out MESH
 #endif
             AT_Send("AT+MODE=S\r\n");//mode:Slave
             AT_Send("AT+UARTTM=2\r\n");//data packing time: 20ms

@@ -223,6 +223,17 @@ Time                : 2020-11-27
 *************************************************************/
 void USART1_IRQHandler(void);
 /*************************************************************
+Function Name       : mode_IRQHandler
+Function Description: change exti mode to usart mode
+Param_in            : 
+Param_out           : 
+Return Type         : 
+Note                : 
+Author              : Yan
+Time                : 2020-12-26
+*************************************************************/
+void mode_IRQHandler(void);
+/*************************************************************
 Function Name       : USART1_SendWord
 Function Description: Transmits 8 bit *data through the USART1 peripharal
 Param_in            : *Data

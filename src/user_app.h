@@ -18,8 +18,10 @@ Date     : 2020-11-23
 /*----------- Global Definitions and Declarations ----------*/
 extern volatile uint8_t BLE_STA_flag;//BLE state flag 0:MESH, 1:NON-MESH
 extern volatile uint8_t LOCK_STA_flag;//LOCK state flag 0:LOCKED, 1:UNLOCKED
+extern volatile uint8_t SYS_STA_flag;//system state flag 0:halt, 1:run
 #if (RELAY_DEV == DEVICE_ID)
 extern volatile uint8_t ctrl_string[];//used to control LED group
+extern volatile uint8_t sta_string[];//used to record node status
 #endif
 /*-------------------- Type Declarations -------------------*/
 #define DEBUG_STATUS 0 //record the status of function

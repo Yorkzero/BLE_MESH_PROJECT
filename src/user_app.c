@@ -21,8 +21,10 @@ Date     : 2020-11-23
 /*------------------ Variable Declarations -----------------*/
 volatile uint8_t BLE_STA_flag = 1;//BLE state flag 0:MESH, 1:NON-MESH
 volatile uint8_t LOCK_STA_flag = 1;//LOCK state flag 0:LOCKED, 1:UNLOCKED
+volatile uint8_t SYS_STA_flag = 0;//system state flag 0:halt, 1:run
 #if (1 == DEVICE_ID)
 volatile uint8_t ctrl_string[] = "::000";//used to control LED group
+volatile uint8_t sta_string[] = "0000000000";//used to record node status
 #endif
 /*------------------- Function Prototype -------------------*/
 
@@ -329,11 +331,16 @@ void user_app_run(void)
 {
 #if (RELAY_DEV != DEVICE_ID)
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 0)//No message
-        return;    
+    {
+        // SYS_STA_flag = 0;
+        return;
+    }
+            
     if(('0' != USART1_RX_buf[2]) && ('1' != USART1_RX_buf[2]))//non-key message
     {
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
+        // SYS_STA_flag = 0;
         return;
     }
     if('f' == USART1_RX_buf[0])
@@ -341,6 +348,7 @@ void user_app_run(void)
         ble_lock(ENABLE);
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
+        SYS_STA_flag = 0;
         return;
     }
     if('d' == USART1_RX_buf[0])
@@ -348,6 +356,7 @@ void user_app_run(void)
         ble_lock(DISABLE);
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
         USART1_RX_STA = 0;
+        SYS_STA_flag = 0;
         return;
     }
     if((USART1_RX_STA & (uint16_t)(1<<15)) == 32768)//Get key message
@@ -369,12 +378,14 @@ void user_app_run(void)
                 ble_lock(DISABLE);
             }
             memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
-            USART1_RX_STA = 0;    
+            USART1_RX_STA = 0;
+            SYS_STA_flag = 0;    
         }
         else
         {
             memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
-            USART1_RX_STA = 0;    
+            USART1_RX_STA = 0;  
+            SYS_STA_flag = 0;  
         }
     }
 #endif
