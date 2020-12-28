@@ -68,6 +68,11 @@ Date     : 2020-11-20
 #define LINK_PORT       GPIOC       //BLE LINK STA
 #define LINK_PIN        GPIO_Pin_4  //BLE LINK STA
 
+#define SIM_TX_PORT     GPIOB
+#define SIM_TX_PIN      GPIO_Pin_3
+#define SIM_SET()       SIM_TX_PORT->ODR |= SIM_TX_PIN
+#define SIM_RESET()     SIM_TX_PORT->ODR &= ~SIM_TX_PIN
+
 #define MOTOA_PORT      GPIOB
 #define MOTOA_PIN       GPIO_Pin_2
 #define MOTOB_PORT      GPIOB

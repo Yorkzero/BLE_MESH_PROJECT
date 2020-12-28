@@ -44,7 +44,9 @@ int main(void)
     bsp_clk_init();
     bsp_gpio_init();
     bsp_uart_init(); 
-
+#if (SIM_UART_PRINTF_EN)
+    GPIO_Init(SIM_TX_PORT, SIM_TX_PIN, GPIO_Mode_Out_PP_High_Fast);
+#endif
 #if (1 == CODE_VERSION)//Version 1     
     KEY_ENABLE();
     // LINK_ENABLE();

@@ -890,259 +890,54 @@ void mesh_data_transmitts(uint8_t *mesh_data)
         memset(USART1_RX_buf, 0, sizeof(USART1_RX_buf));
     }
 }
-/*************************************************************
-Function Name       : sim_uart_printf
-Function Description: 模拟串口打印
-Param_in            : data
-Param_out           : 
-Return Type         : 
-Note                : PB0端口打印
-Author              : Yan
-Time                : 2020-11-20
-*************************************************************/
+/**
+ * 模拟串口打印输出调试信息
+ * 波特率9600，即电平改变间隔1/9600=104us
+ * 起始位为0，8位数据，无奇偶校验位，一位停止位
+ * 使用PB3打印输出，修改时应修改main.h的宏定义
+ */
 #if (SIM_UART_PRINTF_EN)
 void sim_uart_printf(uint8_t data)
 {
-    //PB_ODR |= bit0;
-    //PB_DDR |= bit0;
-    //PB_CR1 |= bit0;
-
-    asm("SIM"); //关总中断
-
-    //发送起始位
-    GPIOB->ODR &= ~GPIO_Pin_0;
-
-#if (SYS_CLK_FREQ == SYS_CLK_FREQ_16M)
-    asm(
-        //保存本程序使用到的寄存器
-        "PUSHW Y\n" //2T
-        "PUSHW X\n" //2T
-
-        "LDW Y,#9\n"       //2T用来控制循环
-        "LDW X,#41\n"      //2T，赋值，实测得到
-        "Delay0: DECW X\n" //减1，1个指令周期
-        "JRNE Delay0\n"    //判断跳转，跳转要2T，不跳要1T
-        "NOP\n"
-
-        //到设置新的电平，需要6T
-        "SEND_DATA:DECW Y\n" //1T,判断循环是否结束
-        "JREQ STOP\n"        //结束则跳转，2T，不跳转则1T
-        "NOP\n"              //1T，补偿未跳转的1T
-
-        "SRL A\n"               //1T,逻辑右移，同时bit0在C标志位中
-        "JRC SET1\n"            //等于1则跳转，跳转2T，不跳转1T
-        "NOP\n"                 //1T，补偿未跳转的1T
-        "BRES 0x5005,#0\n"      //1T，输出低
-        "JP Delay1\n"           //1T，无条件跳转
-        "SET1:BSET 0x5005,#0\n" //1T，输出高
-        "NOP\n"
-
-        "Delay1:NOP\n"
-        "LDW X,#41\n"    //2T，实测得到
-        "LOOP1:DECW X\n" //1T
-        "JRNE LOOP1\n"   //跳转则2T，不跳转则1T
-
-        "JP SEND_DATA\n" //1T，无条件跳转
-
-        //发送2位时长的停止位
-        "STOP:TNZW X\n"    //2T,只是为了延时2T
-        "TNZW X\n"         //2T,只是为了延时2T
-        "BSET 0x5005,#0\n" //1T，输出高
-        "LDW X,#92\n"      //2T，延时139x2-2=276T
-        "LOOP2:DECW X\n"   //1T
-        "JRNE LOOP2\n"     //跳转则2T，不跳转则1T
-        "NOP\n"
-
-        //恢复本程序使用到的寄存器
-        "POPW X\n"
-        "POPW Y");
-#elif (SYS_CLK_FREQ == SYS_CLK_FREQ_4M)
-    //每个bit延时34T
-    asm(
-        //保存本程序使用到的寄存器
-        "PUSHW Y\n"
-        "PUSHW X\n"
-
-        "LDW Y,#9\n" //2T用来控制循环
-        "LDW X,#6\n" //2T，赋值
-        //本段延时19T
-        "Delay0: DECW X\n" //减1，1个指令周期
-        "JRNE Delay0\n"    //判断跳转，跳转要2T，不跳要1T
-        "NOP\n"
-        "NOP\n"
-
-        //到设置新的电平，需要6T
-        "SEND_DATA:DECW Y\n" //1T,判断循环是否结束
-        "JREQ STOP\n"        //结束则跳转，2T，不跳转则1T
-        "NOP\n"              //1T，补偿未跳转的1T
-
-        "SRL A\n"    //1T,逻辑右移，同时bit0在C标志位中
-        "JRC SET1\n" //等于1则跳转，跳转2T，确认不跳转1T
-        //"NOP\n"//1T，补偿未跳转的1T，实测调整
-        "BRES 0x5005,#0\n"      //1T，输出低
-        "JP Delay1\n"           //1T，无条件跳转
-        "SET1:BSET 0x5005,#0\n" //1T，输出高
-        "NOP\n"
-        "NOP\n" //实测调整
-        "NOP\n"
-
-        //到下个bit变化前，需要再延时26T
-        "Delay1:LDW X,#7\n" //2T，
-        //本段延时21T
-        "LOOP1:DECW X\n" //1T
-        "JRNE LOOP1\n"   //跳转则2T，不跳转则1T
-        "JP SEND_DATA\n" //1T，无条件跳转
-
-        //发送2位时长的停止位
-        "STOP:TNZW X\n"    //2T,只是为了延时2T
-        "NOP\n"            //1T,只是为了延时1T
-        "BSET 0x5005,#0\n" //1T，输出高
-
-        //需要延时68T
-        "LDW X,#22\n" //2T
-        //本段总延时66T
-        "LOOP2:DECW X\n" //1T
-        "JRNE LOOP2\n"   //跳转则2T，不跳转则1T
-        "NOP\n"
-
-        //恢复本程序使用到的寄存器
-        "POPW X\n"
-        "POPW Y");
-#endif
-    asm("RIM"); //使能全局中断
+    uint8_t i;
+    uint8_t temp_value = 0;
+    SIM_RESET();//发送起始位
+    delay_us_1(100);//校正值
+    for (i = 0; i < 8; i++)
+    {
+        temp_value = (data & 0x01);
+        if(temp_value)
+        {
+            SIM_SET();
+        }
+        if(!temp_value)
+        {
+            SIM_RESET();
+        }
+        delay_us_1(100);
+        data >>= 1;
+    }
+    SIM_SET();//发送停止位
+    delay_us_1(100);
 }
-
-void sim_uart_printf_it(uint8_t data)
-{
-    //PB_ODR |= bit0;
-    //PB_DDR |= bit0;
-    //PB_CR1 |= bit0;
-
-    //asm("SIM");  //关总中断
-
-    //发送起始位
-    GPIOB->ODR &= ~GPIO_Pin_0;
-
-#if (SYS_CLK_FREQ == SYS_CLK_FREQ_16M)
-    asm(
-        //保存本程序使用到的寄存器
-        "PUSHW Y\n" //2T
-        "PUSHW X\n" //2T
-
-        "LDW Y,#9\n"       //2T用来控制循环
-        "LDW X,#41\n"      //2T，赋值，实测得到
-        "Delay0: DECW X\n" //减1，1个指令周期
-        "JRNE Delay0\n"    //判断跳转，跳转要2T，不跳要1T
-        "NOP\n"
-
-        //到设置新的电平，需要6T
-        "SEND_DATA:DECW Y\n" //1T,判断循环是否结束
-        "JREQ STOP\n"        //结束则跳转，2T，不跳转则1T
-        "NOP\n"              //1T，补偿未跳转的1T
-
-        "SRL A\n"               //1T,逻辑右移，同时bit0在C标志位中
-        "JRC SET1\n"            //等于1则跳转，跳转2T，不跳转1T
-        "NOP\n"                 //1T，补偿未跳转的1T
-        "BRES 0x5005,#0\n"      //1T，输出低
-        "JP Delay1\n"           //1T，无条件跳转
-        "SET1:BSET 0x5005,#0\n" //1T，输出高
-        "NOP\n"
-
-        "Delay1:NOP\n"
-        "LDW X,#41\n"    //2T，实测得到
-        "LOOP1:DECW X\n" //1T
-        "JRNE LOOP1\n"   //跳转则2T，不跳转则1T
-
-        "JP SEND_DATA\n" //1T，无条件跳转
-
-        //发送2位时长的停止位
-        "STOP:TNZW X\n"    //2T,只是为了延时2T
-        "TNZW X\n"         //2T,只是为了延时2T
-        "BSET 0x5005,#0\n" //1T，输出高
-        "LDW X,#92\n"      //2T，延时139x2-2=276T
-        "LOOP2:DECW X\n"   //1T
-        "JRNE LOOP2\n"     //跳转则2T，不跳转则1T
-        "NOP\n"
-
-        //恢复本程序使用到的寄存器
-        "POPW X\n"
-        "POPW Y");
-#elif (SYS_CLK_FREQ == SYS_CLK_FREQ_4M)
-    //每个bit延时34T
-    asm(
-        //保存本程序使用到的寄存器
-        "PUSHW Y\n"
-        "PUSHW X\n"
-
-        "LDW Y,#9\n" //2T用来控制循环
-        "LDW X,#6\n" //2T，赋值
-        //本段延时19T
-        "Delay0: DECW X\n" //减1，1个指令周期
-        "JRNE Delay0\n"    //判断跳转，跳转要2T，不跳要1T
-        "NOP\n"
-        "NOP\n"
-
-        //到设置新的电平，需要6T
-        "SEND_DATA:DECW Y\n" //1T,判断循环是否结束
-        "JREQ STOP\n"        //结束则跳转，2T，不跳转则1T
-        "NOP\n"              //1T，补偿未跳转的1T
-
-        "SRL A\n"    //1T,逻辑右移，同时bit0在C标志位中
-        "JRC SET1\n" //等于1则跳转，跳转2T，确认不跳转1T
-        //"NOP\n"//1T，补偿未跳转的1T，实测调整
-        "BRES 0x5005,#0\n"      //1T，输出低
-        "JP Delay1\n"           //1T，无条件跳转
-        "SET1:BSET 0x5005,#0\n" //1T，输出高
-        "NOP\n"
-        "NOP\n" //实测调整
-        "NOP\n"
-
-        //到下个bit变化前，需要再延时26T
-        "Delay1:LDW X,#7\n" //2T，
-        //本段延时21T
-        "LOOP1:DECW X\n" //1T
-        "JRNE LOOP1\n"   //跳转则2T，不跳转则1T
-        "JP SEND_DATA\n" //1T，无条件跳转
-
-        //发送2位时长的停止位
-        "STOP:TNZW X\n"    //2T,只是为了延时2T
-        "NOP\n"            //1T,只是为了延时1T
-        "BSET 0x5005,#0\n" //1T，输出高
-
-        //需要延时68T
-        "LDW X,#22\n" //2T
-        //本段总延时66T
-        "LOOP2:DECW X\n" //1T
-        "JRNE LOOP2\n"   //跳转则2T，不跳转则1T
-        "NOP\n"
-
-        //恢复本程序使用到的寄存器
-        "POPW X\n"
-        "POPW Y");
-#endif
-    //    asm("RIM");	//使能全局中断
-}
-
+//模拟发送字符串
 void sim_printf_string(uint8_t *str)
 {
-    if (0 == str)
-        return;
-
-    while (*str)
+    while (*str != 0)
     {
         sim_uart_printf(*str++);
     }
 }
-
-const uint8_t hex_tab[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+//模拟发送数据
+const uint8_t hex_tab[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 void sim_printf_hex(uint8_t data)
 {
     sim_uart_printf('0');
     sim_uart_printf('x');
-    sim_uart_printf(hex_tab[data >> 4]);
-    sim_uart_printf(hex_tab[data & 0x0F]);
+    sim_uart_printf(hex_tab[data >> 4]);//高4位
+    sim_uart_printf(hex_tab[data & 0x0F]);//低4位
     sim_uart_printf(' ');
-}
 
+}
 #endif
 /*--------------------------- END --------------------------*/
